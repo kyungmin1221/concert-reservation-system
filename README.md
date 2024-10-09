@@ -81,11 +81,11 @@
 <summary><b>👥 시나리오 요구사항 분석</b></summary>
 
 
-####  👥 API 별 시나리오
+####  [ API 별 시나리오 ]
     
 1.유저 대기열 토큰 기능 시나리오
 
-[ 어떤식으로 대기열을 구성할 것인가 ? ]
+❓ **어떤식으로 대기열을 구성할 것인가** ❓
 * 은행창구 방식
     * 1명이 끝나면 다음 1명이 들어오는 방식
         * 장점 : 개발자가 설정한 사용자 수만 예약이 가능, 서버 부하를 일정 수준 이하로 유지 가능
@@ -127,16 +127,20 @@
 
 
 <details>
-<summary><b>📝 시퀀스 다이어그램</b></summary>
+<summary><b>📝 시퀀스 다이어그램 (미작성)</b></summary>
 
 
 ## part1: 대기열 생성 및 관리
 
 
-
 </details>
 
+<details>
+<summary><b>🛠️ API 명세 </b></summary>
 
+
+
+</details>
 
 <details>
 <summary><b>🧭 Milestone</b></summary>
