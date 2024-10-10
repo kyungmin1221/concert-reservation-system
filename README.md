@@ -127,7 +127,8 @@
 
 
 <details>
-<summary><b>📝 시퀀스 다이어그램 (미작성)</b></summary>
+<summary><b>📝 시퀀스 다이어그램</b></summary>
+<img width="1147" alt="스크린샷 2024-10-10 오후 8 46 55" src="https://github.com/user-attachments/assets/f6ff4900-af4a-4fe5-86d2-f82b0f1103dd">
 
 
 ## part1: 대기열 생성 및 관리
