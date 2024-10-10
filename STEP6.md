@@ -30,23 +30,30 @@
     - 이 과정은 유저가 바로 대기열에서 빠져나오는 것처럼 처리되어야 하고, 바로 토큰을 이용해 다른 기능들을 정상적으로 이용 가능해야한다.
 
 </details>
+
 <details>
 <summary><b>🛠️ 기술 스택</b></summary>
-- **Architecture**
+    
+**Architecture**
+
     - Testable Business logics
     - Layered Architecture Based
     - Clean Architecture
-- **DB ORM**
+
+**DB ORM**
+
     - Spring JPA
     - MYSQL
     
-- **Test**
+**Test**
+
     - JUnit 
 
 </details>
 
 <details>
 <summary><b>📝 API 명세</b></summary>
+<img width="1002" alt="스크린샷 2024-10-10 오후 9 46 21" src="https://github.com/user-attachments/assets/ee3f4bd5-e8e0-4d2b-a8a8-a5348b3746aa">
 
 
 </details>
