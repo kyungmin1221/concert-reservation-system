@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -22,6 +24,9 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String uuid;
+
+    @OneToMany(mappedBy = "user")
+    private List<Reservation> reservationList = new ArrayList<>();
 
     @Builder
     public User(Long id, String name) {

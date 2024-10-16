@@ -17,6 +17,11 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * 유저 등록
+     * @param requestDto
+     * @return
+     */
     @PostMapping("/signin")
     public ResponseEntity<UserResponseDto> registerUser(@RequestBody  UserRequestDto requestDto) {
         UserResponseDto responseDto = userService.registerUser(requestDto);
