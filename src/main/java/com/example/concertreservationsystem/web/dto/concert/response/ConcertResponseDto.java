@@ -8,8 +8,10 @@ import lombok.Setter;
 public class ConcertResponseDto {
 
     private String name;
+    private Long price;
 
-    public ConcertResponseDto(String name) {
+    public ConcertResponseDto(String name, Long price) {
         this.name = name;
+        this.price = price;
     }
 }

@@ -41,4 +41,8 @@ public class Seat {
         this.available = false;
         concertEvent.reserveConcert();
     }
+
+    public void setAvailable() {
+        this.available = true;
+    }
 }

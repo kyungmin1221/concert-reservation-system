@@ -22,6 +22,9 @@ public class User {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private Long point = 0L;
+
     @Column(nullable = false, unique = true)
     private String uuid;
 
@@ -36,6 +39,19 @@ public class User {
         this.id = id;
         this.name = name;
         this.uuid = UUID.randomUUID().toString();
+    }
+
+    // 잔액 충전
+    public void addPoints(Long point) {
+        this.point += point;
+    }
+
+    // 예약 시 금액 차감
+    public void minusPoints(Long point) {
+        if(this.point < point) {
+            throw new IllegalStateException("콘서트를 결제할 잔액이 부족합니다. 금액을 충전하세요");
+        }
+        this.point -= point;
     }
 
 }

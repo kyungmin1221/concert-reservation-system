@@ -1,5 +1,6 @@
 package com.example.concertreservationsystem.domain.service;
 
+import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import com.example.concertreservationsystem.domain.model.*;
 import com.example.concertreservationsystem.domain.repo.ConcertRepository;
 import com.example.concertreservationsystem.domain.repo.QueueRepository;
@@ -43,10 +44,11 @@ public class ReservationService {
         }
 
         // 대기열 토큰 검증
-        validateToken(token, user);
+        validateToken(token);
 
         // 예약 가능 : 예약 상태를 true -> false 변경
         seat.reserve();
+        // 해당 콘서트 예약시 유저 포인트에서 해당하는 콘서트 비용을 차감해야함 (돈이 모자를 경우 예외 처리)
 
         Reservation reservation = Reservation.builder()
                 .name(user.getName() + " 의 예약입니다.")
@@ -54,6 +56,7 @@ public class ReservationService {
                 .user(user)
                 .seat(seat)
                 .concert(concert)
+                .status(ReservationStatus.ONGOING)
                 .build();
 
         reservationRepository.save(reservation);
@@ -62,14 +65,13 @@ public class ReservationService {
                 requestDto.getSeatNumber());
     }
 
+
     // 대기열 토큰 여부 검증
-    public void validateToken(String queueToken, User user) {
+    public User validateToken(String queueToken) {
         QueueEntry queueEntry = queueRepository.findByQueueToken(queueToken)
                 .orElseThrow(() -> new IllegalArgumentException("대기열 토큰이 없습니다."));
 
-        if(!queueEntry.getUser().equals(user)) {
-            throw new IllegalStateException("유효하지 않은 사용자입니다.");
-        }
+        return queueEntry.getUser();
     }
 
 }

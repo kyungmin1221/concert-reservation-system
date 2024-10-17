@@ -23,10 +23,11 @@ public class ConcertUseCase {
         }
         Concert concert = Concert.builder()
                 .name(concertName)
+                .price(requestDto.getPrice())
                 .build();
         concertRepository.save(concert);
 
-        return new ConcertResponseDto(concert.getName());
+        return new ConcertResponseDto(concert.getName(), concert.getPrice());
     }
 }
 

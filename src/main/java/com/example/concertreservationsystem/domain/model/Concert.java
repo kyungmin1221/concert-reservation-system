@@ -21,6 +21,9 @@ public class Concert {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private Long price;         // 콘서트 가격
+
     @OneToMany(mappedBy = "concert")
     private List<ConcertEvent> concertEventList = new ArrayList<>();
 
@@ -28,7 +31,8 @@ public class Concert {
     private List<Reservation> reservationList = new ArrayList<>();
 
     @Builder
-    public Concert(String name) {
+    public Concert(String name, Long price) {
         this.name = name;
+        this.price = price;
     }
 }

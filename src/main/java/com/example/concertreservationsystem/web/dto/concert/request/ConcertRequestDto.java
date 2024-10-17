@@ -8,4 +8,5 @@ import lombok.Setter;
 public class ConcertRequestDto {
 
     private String name;
+    private Long price;
 }
