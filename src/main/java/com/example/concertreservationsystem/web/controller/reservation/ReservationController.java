@@ -23,8 +23,9 @@ public class ReservationController {
      */
     @PostMapping("/{concertId}")
     public ResponseEntity<ReservationResponseDto> rvConcertToUser(@PathVariable Long concertId,
+                                                                  @RequestParam String token,
                                                                   @RequestBody ReservationRequestDto requestDto) {
-        ReservationResponseDto responseDto = reservationService.rvConcertToUser(concertId, requestDto);
+        ReservationResponseDto responseDto = reservationService.rvConcertToUser(concertId, token, requestDto);
         return ResponseEntity.ok(responseDto);
     }
 }

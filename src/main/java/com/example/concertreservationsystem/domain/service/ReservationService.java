@@ -1,10 +1,8 @@
 package com.example.concertreservationsystem.domain.service;
 
-import com.example.concertreservationsystem.domain.model.Concert;
-import com.example.concertreservationsystem.domain.model.Reservation;
-import com.example.concertreservationsystem.domain.model.Seat;
-import com.example.concertreservationsystem.domain.model.User;
+import com.example.concertreservationsystem.domain.model.*;
 import com.example.concertreservationsystem.domain.repo.ConcertRepository;
+import com.example.concertreservationsystem.domain.repo.QueueRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaConcertRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaReservationRepository;
@@ -22,11 +20,12 @@ import java.time.LocalDateTime;
 public class ReservationService {
 
     private final UserRepository userRepository;
+    private final QueueRepository queueRepository;
     private final JpaConcertRepository concertRepository;
     private final JpaSeatRepository seatRepository;
     private final JpaReservationRepository reservationRepository;
     @Transactional
-    public ReservationResponseDto rvConcertToUser(Long concertId, ReservationRequestDto requestDto) {
+    public ReservationResponseDto rvConcertToUser(Long concertId, String token, ReservationRequestDto requestDto) {
 
         User user = userRepository.findByUuid(requestDto.getUuid())
                 .orElseThrow(() -> new IllegalArgumentException("등록된 유저가 없습니다."));
@@ -43,7 +42,10 @@ public class ReservationService {
             throw new IllegalStateException("이미 예약된 좌석입니다. 다른 좌석을 선택해주세요.");
         }
 
-        // 예약 가능  :   예약 상태를 true -> false 변경
+        // 대기열 토큰 검증
+        validateToken(token, user);
+
+        // 예약 가능 : 예약 상태를 true -> false 변경
         seat.reserve();
 
         Reservation reservation = Reservation.builder()
@@ -58,6 +60,16 @@ public class ReservationService {
         return new ReservationResponseDto(
                 requestDto.getConcertName(),
                 requestDto.getSeatNumber());
+    }
+
+    // 대기열 토큰 여부 검증
+    public void validateToken(String queueToken, User user) {
+        QueueEntry queueEntry = queueRepository.findByQueueToken(queueToken)
+                .orElseThrow(() -> new IllegalArgumentException("대기열 토큰이 없습니다."));
+
+        if(!queueEntry.getUser().equals(user)) {
+            throw new IllegalStateException("유효하지 않은 사용자입니다.");
+        }
     }
 
 }
