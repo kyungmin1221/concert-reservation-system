@@ -28,6 +28,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Reservation> reservationList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<QueueEntry> queueEntryList = new ArrayList<>();
+
     @Builder
     public User(Long id, String name) {
         this.id = id;

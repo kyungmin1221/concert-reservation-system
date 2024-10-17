@@ -11,4 +11,7 @@ import java.util.Optional;
 public interface JpaUserRepository extends JpaRepository<User, Long>, UserRepository {
     @Override
     Optional<User> findByName(String name);
+
+    @Override
+    Optional<User> findByUuid(String uuid);
 }
