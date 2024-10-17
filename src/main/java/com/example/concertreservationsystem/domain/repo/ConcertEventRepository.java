@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 public interface ConcertEventRepository {
 
-    ConcertEvent save(ConcertEvent concertEvent);
+    //ConcertEvent save(ConcertEvent concertEvent);
     boolean existsByConcertAndEventDate(Concert concert, LocalDate eventDate);
 
 }

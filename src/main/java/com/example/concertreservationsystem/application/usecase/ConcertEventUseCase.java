@@ -5,6 +5,7 @@ import com.example.concertreservationsystem.domain.model.ConcertEvent;
 import com.example.concertreservationsystem.domain.repo.ConcertEventRepository;
 import com.example.concertreservationsystem.domain.repo.ConcertRepository;
 import com.example.concertreservationsystem.infrastructure.config.SeatInitializer;
+import com.example.concertreservationsystem.infrastructure.persistence.JpaConcertEventRepository;
 import com.example.concertreservationsystem.web.dto.event.request.EventRequestDto;
 import com.example.concertreservationsystem.web.dto.event.response.EventResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class ConcertEventUseCase {
 
-    private final ConcertEventRepository concertEventRepository;
+    private final JpaConcertEventRepository concertEventRepository;
     private final ConcertRepository concertRepository;
     private final SeatInitializer seatInitializer;
 

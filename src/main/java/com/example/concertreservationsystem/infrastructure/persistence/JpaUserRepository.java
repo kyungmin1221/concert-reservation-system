@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+// 상위모듈
 @Repository
 public interface JpaUserRepository extends JpaRepository<User, Long>, UserRepository {
     @Override

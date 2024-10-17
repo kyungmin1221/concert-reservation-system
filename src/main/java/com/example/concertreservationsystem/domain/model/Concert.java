@@ -24,6 +24,9 @@ public class Concert {
     @OneToMany(mappedBy = "concert")
     private List<ConcertEvent> concertEventList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "concert")
+    private List<Reservation> reservationList = new ArrayList<>();
+
     @Builder
     public Concert(String name) {
         this.name = name;

@@ -42,4 +42,8 @@ public class ConcertEvent {
         this.availableSeats = totalSeats;
         this.concert = concert;
     }
+
+    public void reserveConcert() {
+        this.availableSeats -= 1;
+    }
 }

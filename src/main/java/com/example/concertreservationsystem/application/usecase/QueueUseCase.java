@@ -2,6 +2,7 @@ package com.example.concertreservationsystem.application.usecase;
 
 import com.example.concertreservationsystem.domain.model.QueueEntry;
 import com.example.concertreservationsystem.domain.model.User;
+import com.example.concertreservationsystem.domain.repo.QueueRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaQueueRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaUserRepository;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class QueueUseCase {
 
-    private final JpaUserRepository userRepository;
+    private final UserRepository userRepository;
     private final JpaQueueRepository queueRepository;
 
     @Transactional

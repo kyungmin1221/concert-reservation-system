@@ -1,6 +1,7 @@
 package com.example.concertreservationsystem.domain.model;
 
 
+import io.lettuce.core.dynamic.annotation.Param;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,11 +27,18 @@ public class Seat {
     @JoinColumn(name = "event_id")
     private ConcertEvent concertEvent;
 
+    @OneToOne(mappedBy = "seat", fetch = FetchType.LAZY)
+    private Reservation reservation;
+
     @Builder
     public Seat(String seatNumber, ConcertEvent concertEvent) {
         this.seatNumber = seatNumber;
-        this.available = true;
         this.concertEvent = concertEvent;
     }
 
+    // 예약을 완료 했을 경우 좌석 예약 여부를 false 로 변경
+    public void reserve() {
+        this.available = false;
+        concertEvent.reserveConcert();
+    }
 }
