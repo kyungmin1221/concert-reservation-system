@@ -1,5 +1,6 @@
 package com.example.concertreservationsystem.domain.service;
 
+import com.example.concertreservationsystem.application.usecase.ReservationUseCase;
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import com.example.concertreservationsystem.domain.model.*;
 import com.example.concertreservationsystem.domain.repo.ConcertRepository;
@@ -18,13 +19,15 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-public class ReservationService {
+public class ReservationService implements ReservationUseCase {
 
     private final UserRepository userRepository;
     private final QueueRepository queueRepository;
     private final JpaConcertRepository concertRepository;
     private final JpaSeatRepository seatRepository;
     private final JpaReservationRepository reservationRepository;
+
+    @Override
     @Transactional
     public ReservationResponseDto rvConcertToUser(Long concertId, String token, ReservationRequestDto requestDto) {
 
