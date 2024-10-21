@@ -31,27 +31,26 @@ public class ReservationService implements ReservationUseCase {
     @Transactional
     public ReservationResponseDto rvConcertToUser(Long concertId, String token, ReservationRequestDto requestDto) {
 
+        // 대기열 토큰 검증 먼저 수행
+        validateToken(token);
+
         User user = userRepository.findByUuid(requestDto.getUuid())
                 .orElseThrow(() -> new IllegalArgumentException("등록된 유저가 없습니다."));
+
+        Concert concert = concertRepository.findById(concertId)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 콘서트가 없습니다."));
 
         Seat seat = seatRepository.findSeatForUpdate(
                 requestDto.getSeatNumber(), requestDto.getEventId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 좌석은 선택할 수 없습니다."));
-
-        Concert concert = concertRepository.findById(concertId)
-                .orElseThrow(() -> new IllegalArgumentException("해당하는 콘서트가 없습니다."));
 
         // 예약이 불가능한 경우 로직 //
         if(!seat.isAvailable()) {
             throw new IllegalStateException("이미 예약된 좌석입니다. 다른 좌석을 선택해주세요.");
         }
 
-        // 대기열 토큰 검증
-        validateToken(token);
-
         // 예약 가능 : 예약 상태를 true -> false 변경
         seat.reserve();
-        // 해당 콘서트 예약시 유저 포인트에서 해당하는 콘서트 비용을 차감해야함 (돈이 모자를 경우 예외 처리)
 
         Reservation reservation = Reservation.builder()
                 .name(user.getName() + " 의 예약입니다.")
