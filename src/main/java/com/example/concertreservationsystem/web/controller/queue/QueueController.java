@@ -1,7 +1,7 @@
 package com.example.concertreservationsystem.web.controller.queue;
 
 
-import com.example.concertreservationsystem.domain.service.QueueService;
+import com.example.concertreservationsystem.application.usecase.QueueUseCase;
 import com.example.concertreservationsystem.web.dto.queue.response.QueueResponseToken;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/queues")
 public class QueueController {
 
-    private final QueueService queueService;
+    private final QueueUseCase queueUseCase;
 
     @Operation(
             summary = "콘서트 대기열 생성",
@@ -32,7 +32,7 @@ public class QueueController {
     )
     @PostMapping
     public ResponseEntity<QueueResponseToken> addQueueToUser(@RequestParam String uuid) {
-        QueueResponseToken responseToken = queueService.addQueueToUser(uuid);
+        QueueResponseToken responseToken = queueUseCase.addQueueToUser(uuid);
         return ResponseEntity.ok(responseToken);
     }
 }

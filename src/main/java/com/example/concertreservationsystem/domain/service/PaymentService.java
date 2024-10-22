@@ -39,9 +39,11 @@ public class PaymentService {
             throw new IllegalStateException("대기열 토큰이 유효하지 않거나 다른 유저입니다.");
         }
 
+        // 유저 보유 잔액에서 콘서트 금액을 차감
         user.minusPoints(concertPrice);
         userRepository.save(user);
 
+        // 예약 상태를 완료상태로 변경
         reservation.setStatusComplete();
         reservationRepository.save(reservation);
 
