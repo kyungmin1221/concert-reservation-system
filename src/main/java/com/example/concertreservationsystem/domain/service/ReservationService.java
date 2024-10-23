@@ -5,6 +5,7 @@ import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import com.example.concertreservationsystem.domain.model.*;
 import com.example.concertreservationsystem.domain.repo.ConcertRepository;
 import com.example.concertreservationsystem.domain.repo.QueueRepository;
+import com.example.concertreservationsystem.domain.repo.ReservationRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaConcertRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaReservationRepository;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +67,61 @@ public class ReservationService implements ReservationUseCase {
                 requestDto.getSeatNumber());
     }
 
+
+    // 일정 시간이 지나면 예약을 취소하는 메서드
+    @Transactional
+    public void cancelReservationStatus() {
+        LocalDateTime expiredTime = LocalDateTime.now().minusMinutes(5);    // 5분 대기
+
+        // 대기열에서 가장 오래 있던 사람을 대기열에서 내보냄
+        List<Reservation> expiredTimeReservation = reservationRepository
+                .findByStatusAndReservationDateBefore(ReservationStatus.ONGOING, expiredTime);
+
+        for(Reservation reservation : expiredTimeReservation) {
+            changeReservationAvailableStatus(reservation);
+        }
+    }
+
+    // 예약 취소한 좌석을 예약 가능하도록 바꾸어주고 -> 대기중인 사람의 예약 상태를 대기중으로 변경
+    private void changeReservationAvailableStatus(Reservation reservation) {
+        reservation.setStatusCanceled();
+        Seat seat = reservation.getSeat();
+        seat.setAvailable();    // 좌석을 다시 이용가능 하도록 변경
+
+        seatRepository.save(seat);
+        reservationRepository.save(reservation);
+
+        // 대기열 첫번째 사람 불러옴
+        Optional<QueueEntry> waitingPerson = queueRepository.findFirstByOrderByQueuePositionAsc();
+
+        // 만약 대기열에 첫번째 사람이 존재하면 -> 예약 상태를 가능하게 바꿔줌 -> jpa 저장
+        if (waitingPerson.isPresent()) {
+            QueueEntry queueEntry = waitingPerson.get();
+            User user = queueEntry.getUser();
+
+            Reservation newReservation = Reservation.builder()
+                    .name(user.getName() + " 의 예약입니다.")
+                    .reservationDate(LocalDateTime.now())
+                    .user(user)
+                    .seat(seat)
+                    .concert(reservation.getConcert())
+                    .status(ReservationStatus.ONGOING)
+                    .build();
+
+            changQueuePosition(queueEntry.getQueuePosition());
+            reservationRepository.save(newReservation);
+            queueRepository.delete(queueEntry);
+        }
+    }
+
+    // 대기열 앞 순서가 나갔을 경우 순서를 앞당기는 메소드
+    private void changQueuePosition(Long position) {
+        List<QueueEntry> waitingPerson = queueRepository.findByQueuePositionGreaterThan(position);
+        for (QueueEntry queueEntry : waitingPerson) {
+            queueEntry.setQueuePosition(queueEntry.getQueuePosition());
+            queueRepository.save(queueEntry);
+        }
+    }
 
     // 대기열 토큰 여부 검증
     public User validateToken(String queueToken) {
