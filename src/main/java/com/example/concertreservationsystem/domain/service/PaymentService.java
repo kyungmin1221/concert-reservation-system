@@ -1,5 +1,6 @@
 package com.example.concertreservationsystem.domain.service;
 
+import com.example.concertreservationsystem.application.usecase.PaymentUseCase;
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import com.example.concertreservationsystem.domain.model.Concert;
 import com.example.concertreservationsystem.domain.model.Reservation;
@@ -15,11 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class PaymentService {
+public class PaymentService implements PaymentUseCase {
 
     private final JpaReservationRepository reservationRepository;
     private final UserRepository userRepository;
     private final ReservationService reservationService;
+
+    @Override
     @Transactional
     public UserPaymentResponseDto paymentConcert(String token, UserPaymentRequestDto requestDto) {
 
