@@ -32,10 +32,7 @@ public class ReservationService implements ReservationUseCase {
     public ReservationResponseDto rvConcertToUser(Long concertId, String token, ReservationRequestDto requestDto) {
 
         // 대기열 토큰 검증 먼저 수행
-        validateToken(token);
-
-        User user = userRepository.findByUuid(requestDto.getUuid())
-                .orElseThrow(() -> new IllegalArgumentException("등록된 유저가 없습니다."));
+        User user = validateToken(token);
 
         Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 콘서트가 없습니다."));

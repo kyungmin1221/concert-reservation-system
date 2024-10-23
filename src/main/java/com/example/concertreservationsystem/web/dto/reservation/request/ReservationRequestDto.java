@@ -7,8 +7,6 @@ import lombok.Setter;
 @Setter
 public class ReservationRequestDto {
 
-    // 예약을 신청하는 유저의 uuid
-    private String uuid;
     // 예약을 할 콘서트 이름
     private String concertName;
     // 예약을 할 콘서트의 이벤트 id

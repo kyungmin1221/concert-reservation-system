@@ -26,7 +26,8 @@ public class ReservationCancellationScheduler {
     public void cancelExpiredReservations() {
         // 현재 시간 기준으로 취소할 예약을 찾음 ( 5분 이상 경과한 대기 상태 예약)
         LocalDateTime expirationTime = LocalDateTime.now().minusMinutes(5);
-        List<Reservation> expiredReservations = reservationRepository.findByStatusAndReservationDateBefore(ReservationStatus.ONGOING, expirationTime);
+        List<Reservation> expiredReservations = reservationRepository.
+                findByStatusAndReservationDateBefore(ReservationStatus.ONGOING, expirationTime);
 
         // 예약 취소 처리 (for 문이 최선일지 추후 고민)
         for (Reservation reservation : expiredReservations) {
