@@ -19,7 +19,7 @@ public class SeatInitializer {
     @Transactional
     public void initializeSeatsForEvent(ConcertEvent concertEvent) {
         List<Seat> seats = new ArrayList<>();
-        for (int i = 1; i <= 100; i++) {
+        for (int i = 1; i <= 50; i++) {
             Seat seat = Seat.builder()
                     .seatNumber(String.valueOf(i))
                     .concertEvent(concertEvent)

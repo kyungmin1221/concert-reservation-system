@@ -31,7 +31,6 @@ public class ReservationController {
             summary = "콘서트 예약 생성",
             description = "콘서트 예약 API",
             parameters = {
-                    @Parameter(name = "uuid", description = "대기열에 진입할 유저의 uuid", example = "abc-def"),
                     @Parameter(name = "concertName", description = "예약할 콘서트의 이름", example = "ive"),
                     @Parameter(name = "eventId", description = "예약할 콘서트 이벤트 ID", example = "1"),
                     @Parameter(name = "seatNumber", description = "예약할 콘서트의 좌석 번호", example = "1")
