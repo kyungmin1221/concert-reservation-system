@@ -1,15 +1,20 @@
 package com.example.concertreservationsystem.domain.service;
 
 import com.example.concertreservationsystem.application.usecase.UserUseCase;
+import com.example.concertreservationsystem.domain.model.QueueEntry;
 import com.example.concertreservationsystem.domain.model.User;
+import com.example.concertreservationsystem.domain.repo.QueueRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
 import com.example.concertreservationsystem.web.dto.user.request.UserPointRequestDto;
 import com.example.concertreservationsystem.web.dto.user.request.UserRequestDto;
 import com.example.concertreservationsystem.web.dto.user.response.UserPointResponseDto;
+import com.example.concertreservationsystem.web.dto.user.response.UserPositionResponseDto;
 import com.example.concertreservationsystem.web.dto.user.response.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +22,7 @@ public class UserService implements UserUseCase {
 
     private final UserRepository userRepository;
     private final ReservationService reservationService;
+    private final QueueRepository queueRepository;
 
     @Override
     @Transactional
@@ -56,5 +62,14 @@ public class UserService implements UserUseCase {
     public UserPointResponseDto getUserPoint(String token) {
         User user = reservationService.validateToken(token);
         return new UserPointResponseDto(user.getPoint());
+    }
+
+    // 본인의 대기번호 조회
+    @Override
+    public UserPositionResponseDto getUserQueuePosition(String token) {
+        QueueEntry queueEntry = queueRepository.findByQueueToken(token)
+                .orElseThrow(() -> new IllegalArgumentException("대기열 토큰이 유효하지 않습니다."));
+
+        return new UserPositionResponseDto(queueEntry.getQueuePosition());
     }
 }
