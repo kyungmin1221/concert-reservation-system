@@ -33,4 +33,7 @@ public interface JpaQueueRepository extends JpaRepository<QueueEntry, Long>, Que
     @Override
     QueueEntry save(QueueEntry queueEntry);
 
+    @Override
+    boolean existsByQueueToken(String queueToken);
+
 }

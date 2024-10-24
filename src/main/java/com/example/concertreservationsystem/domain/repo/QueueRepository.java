@@ -20,4 +20,7 @@ public interface QueueRepository {
     List<QueueEntry> findByQueuePositionGreaterThan(Long position);
 
     QueueEntry save(QueueEntry queueEntry);
+
+    boolean existsByQueueToken(String queueToken);
+
 }

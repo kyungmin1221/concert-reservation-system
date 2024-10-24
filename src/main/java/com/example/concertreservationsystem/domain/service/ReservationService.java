@@ -24,7 +24,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReservationService implements ReservationUseCase {
 
-    private final UserRepository userRepository;
     private final QueueRepository queueRepository;
     private final JpaConcertRepository concertRepository;
     private final JpaSeatRepository seatRepository;
@@ -69,7 +68,6 @@ public class ReservationService implements ReservationUseCase {
 
 
     // 일정 시간이 지나면 예약을 취소하는 메서드
-    @Transactional
     public void cancelReservationStatus() {
         LocalDateTime expiredTime = LocalDateTime.now().minusMinutes(5);    // 5분 대기
 
@@ -129,6 +127,10 @@ public class ReservationService implements ReservationUseCase {
                 .orElseThrow(() -> new IllegalArgumentException("대기열 토큰이 없습니다."));
 
         return queueEntry.getUser();
+    }
+
+    public boolean isValidToken(String queueToken) {
+        return queueRepository.existsByQueueToken(queueToken);
     }
 
 }
