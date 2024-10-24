@@ -24,10 +24,10 @@ public class Concert {
     @Column(nullable = false)
     private Long price;         // 콘서트 가격
 
-    @OneToMany(mappedBy = "concert")
+    @OneToMany(mappedBy = "concert", fetch = FetchType.LAZY)
     private List<ConcertEvent> concertEventList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "concert")
+    @OneToMany(mappedBy = "concert", fetch = FetchType.LAZY)
     private List<Reservation> reservationList = new ArrayList<>();
 
     @Builder

@@ -28,10 +28,10 @@ public class User {
     @Column(nullable = false, unique = true)
     private String uuid;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Reservation> reservationList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<QueueEntry> queueEntryList = new ArrayList<>();
 
     @Builder

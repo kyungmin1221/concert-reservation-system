@@ -22,7 +22,7 @@ public class ConcertEvent {
     private Long availableSeats;
 
     @Column
-    private Long totalSeats = 100L;
+    private Long totalSeats = 50L;
 
     // 콘서트 날짜
     @Column(nullable = false)
@@ -32,7 +32,7 @@ public class ConcertEvent {
     @JoinColumn(name = "concert_id")
     private Concert concert;
 
-    @OneToMany(mappedBy = "concertEvent", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "concertEvent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Seat> seats = new ArrayList<>();
 
     @Builder

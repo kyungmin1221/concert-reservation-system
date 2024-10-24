@@ -3,13 +3,13 @@ package com.example.concertreservationsystem.domain.service;
 import com.example.concertreservationsystem.application.usecase.ReservationUseCase;
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import com.example.concertreservationsystem.domain.model.*;
-import com.example.concertreservationsystem.domain.repo.ConcertRepository;
-import com.example.concertreservationsystem.domain.repo.QueueRepository;
-import com.example.concertreservationsystem.domain.repo.ReservationRepository;
-import com.example.concertreservationsystem.domain.repo.UserRepository;
+import com.example.concertreservationsystem.domain.repo.*;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaConcertRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaReservationRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaSeatRepository;
+import com.example.concertreservationsystem.web.dto.event.response.EventDateResponseDto;
+import com.example.concertreservationsystem.web.dto.event.response.EventResponseDto;
+import com.example.concertreservationsystem.web.dto.event.response.EventSeatResponseDto;
 import com.example.concertreservationsystem.web.dto.reservation.request.ReservationRequestDto;
 import com.example.concertreservationsystem.web.dto.reservation.response.ReservationResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +29,7 @@ public class ReservationService implements ReservationUseCase {
     private final JpaConcertRepository concertRepository;
     private final JpaSeatRepository seatRepository;
     private final JpaReservationRepository reservationRepository;
+    private final ConcertEventRepository concertEventRepository;
 
     @Override
     @Transactional
@@ -65,6 +67,32 @@ public class ReservationService implements ReservationUseCase {
                 requestDto.getConcertName(),
                 requestDto.getSeatNumber());
     }
+
+    // 예약 가능한 날짜 및 좌석 조회
+    // 날짜와 좌석이 false 인 것 리스트로 조회
+    @Override
+    public List<EventDateResponseDto> getInfoDate(String token) {
+        validateToken(token);
+        List<ConcertEvent> concertEvents = concertEventRepository.findAvailableConcertEvents();
+        return concertEvents.stream()
+                .map(concertEvent -> new EventDateResponseDto(
+                        concertEvent.getEventDate(),
+                        concertEvent.getConcert().getName()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EventSeatResponseDto> getInfoSeat(String token, Long eventId) {
+        validateToken(token);
+        List<Seat> seats = seatRepository.findAvailableSeatsByEventId(eventId);
+        return seats.stream()
+                .map(seat -> new EventSeatResponseDto(
+                        seat.getSeatNumber()
+                ))
+                .collect(Collectors.toList());
+    }
+
 
 
     // 일정 시간이 지나면 예약을 취소하는 메서드

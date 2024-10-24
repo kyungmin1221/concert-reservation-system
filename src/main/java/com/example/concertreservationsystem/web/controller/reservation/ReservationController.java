@@ -1,6 +1,8 @@
 package com.example.concertreservationsystem.web.controller.reservation;
 
 import com.example.concertreservationsystem.application.usecase.ReservationUseCase;
+import com.example.concertreservationsystem.web.dto.event.response.EventDateResponseDto;
+import com.example.concertreservationsystem.web.dto.event.response.EventSeatResponseDto;
 import com.example.concertreservationsystem.web.dto.reservation.request.ReservationRequestDto;
 import com.example.concertreservationsystem.web.dto.reservation.response.ReservationResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "콘서트 예약 API", description = "콘서트 예약 관련 API 입니다.")
 @Slf4j
@@ -42,5 +46,18 @@ public class ReservationController {
                                                                   @RequestBody ReservationRequestDto requestDto) {
         ReservationResponseDto responseDto = reservationUseCase.rvConcertToUser(concertId, token, requestDto);
         return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/dates")
+    public ResponseEntity<List<EventDateResponseDto>> getInfoDateAndSeat(@RequestParam String token) {
+        List<EventDateResponseDto> responseDtos = reservationUseCase.getInfoDate(token);
+        return ResponseEntity.ok(responseDtos);
+    }
+
+    @GetMapping("/{eventId}/seats")
+    public ResponseEntity<List<EventSeatResponseDto>> getInfoSeat(@RequestParam String token,
+                                                                  @PathVariable Long eventId) {
+        List<EventSeatResponseDto> responseDtos = reservationUseCase.getInfoSeat(token, eventId);
+        return ResponseEntity.ok(responseDtos);
     }
 }

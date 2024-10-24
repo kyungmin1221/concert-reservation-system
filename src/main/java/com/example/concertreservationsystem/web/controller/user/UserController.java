@@ -5,6 +5,7 @@ import com.example.concertreservationsystem.domain.repo.UserRepository;
 import com.example.concertreservationsystem.web.dto.user.request.UserPointRequestDto;
 import com.example.concertreservationsystem.web.dto.user.request.UserRequestDto;
 import com.example.concertreservationsystem.web.dto.user.response.UserPointResponseDto;
+import com.example.concertreservationsystem.web.dto.user.response.UserPositionResponseDto;
 import com.example.concertreservationsystem.web.dto.user.response.UserResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -75,6 +76,12 @@ public class UserController {
     @GetMapping("/chargePoint")
     public ResponseEntity<UserPointResponseDto> getUserPoint(@RequestParam String token) {
         UserPointResponseDto responseDto = userUseCase.getUserPoint(token);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/position")
+    public ResponseEntity<UserPositionResponseDto> getUserQueuePosition(@RequestParam String token) {
+        UserPositionResponseDto responseDto = userUseCase.getUserQueuePosition(token);
         return ResponseEntity.ok(responseDto);
     }
 }
