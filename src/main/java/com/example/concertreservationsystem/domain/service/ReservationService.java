@@ -8,7 +8,6 @@ import com.example.concertreservationsystem.infrastructure.persistence.JpaConcer
 import com.example.concertreservationsystem.infrastructure.persistence.JpaReservationRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaSeatRepository;
 import com.example.concertreservationsystem.web.dto.event.response.EventDateResponseDto;
-import com.example.concertreservationsystem.web.dto.event.response.EventResponseDto;
 import com.example.concertreservationsystem.web.dto.event.response.EventSeatResponseDto;
 import com.example.concertreservationsystem.web.dto.reservation.request.ReservationRequestDto;
 import com.example.concertreservationsystem.web.dto.reservation.response.ReservationResponseDto;
