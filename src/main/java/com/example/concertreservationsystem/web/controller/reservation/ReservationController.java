@@ -1,6 +1,8 @@
 package com.example.concertreservationsystem.web.controller.reservation;
 
-import com.example.concertreservationsystem.domain.service.ReservationService;
+import com.example.concertreservationsystem.application.usecase.ReservationUseCase;
+import com.example.concertreservationsystem.web.dto.event.response.EventDateResponseDto;
+import com.example.concertreservationsystem.web.dto.event.response.EventSeatResponseDto;
 import com.example.concertreservationsystem.web.dto.reservation.request.ReservationRequestDto;
 import com.example.concertreservationsystem.web.dto.reservation.response.ReservationResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "콘서트 예약 API", description = "콘서트 예약 관련 API 입니다.")
 @Slf4j
 @RestController
@@ -18,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/reservations")
 public class ReservationController {
 
-    private final ReservationService reservationService;
+    private final ReservationUseCase reservationUseCase;
 
 
     /**
@@ -31,7 +35,6 @@ public class ReservationController {
             summary = "콘서트 예약 생성",
             description = "콘서트 예약 API",
             parameters = {
-                    @Parameter(name = "uuid", description = "대기열에 진입할 유저의 uuid", example = "abc-def"),
                     @Parameter(name = "concertName", description = "예약할 콘서트의 이름", example = "ive"),
                     @Parameter(name = "eventId", description = "예약할 콘서트 이벤트 ID", example = "1"),
                     @Parameter(name = "seatNumber", description = "예약할 콘서트의 좌석 번호", example = "1")
@@ -41,7 +44,20 @@ public class ReservationController {
     public ResponseEntity<ReservationResponseDto> rvConcertToUser(@PathVariable Long concertId,
                                                                   @RequestParam String token,
                                                                   @RequestBody ReservationRequestDto requestDto) {
-        ReservationResponseDto responseDto = reservationService.rvConcertToUser(concertId, token, requestDto);
+        ReservationResponseDto responseDto = reservationUseCase.rvConcertToUser(concertId, token, requestDto);
         return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/dates")
+    public ResponseEntity<List<EventDateResponseDto>> getInfoDateAndSeat(@RequestParam String token) {
+        List<EventDateResponseDto> responseDtos = reservationUseCase.getInfoDate(token);
+        return ResponseEntity.ok(responseDtos);
+    }
+
+    @GetMapping("/{eventId}/seats")
+    public ResponseEntity<List<EventSeatResponseDto>> getInfoSeat(@RequestParam String token,
+                                                                  @PathVariable Long eventId) {
+        List<EventSeatResponseDto> responseDtos = reservationUseCase.getInfoSeat(token, eventId);
+        return ResponseEntity.ok(responseDtos);
     }
 }

@@ -1,11 +1,11 @@
 package com.example.concertreservationsystem.web.controller.user;
 
-import com.example.concertreservationsystem.domain.model.User;
+import com.example.concertreservationsystem.application.usecase.UserUseCase;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
-import com.example.concertreservationsystem.domain.service.UserService;
 import com.example.concertreservationsystem.web.dto.user.request.UserPointRequestDto;
 import com.example.concertreservationsystem.web.dto.user.request.UserRequestDto;
 import com.example.concertreservationsystem.web.dto.user.response.UserPointResponseDto;
+import com.example.concertreservationsystem.web.dto.user.response.UserPositionResponseDto;
 import com.example.concertreservationsystem.web.dto.user.response.UserResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,8 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
-    private final UserRepository userRepository;
+    private final UserUseCase userUseCase;
 
     /**
      * 유저 등록
@@ -38,7 +37,7 @@ public class UserController {
                     """)
     @PostMapping("/signin")
     public ResponseEntity<UserResponseDto> registerUser(@RequestBody  UserRequestDto requestDto) {
-        UserResponseDto responseDto = userService.registerUser(requestDto);
+        UserResponseDto responseDto = userUseCase.registerUser(requestDto);
         return ResponseEntity.ok(responseDto);
     }
 
@@ -58,7 +57,7 @@ public class UserController {
     @PostMapping("/charge")
     public ResponseEntity<UserPointResponseDto> chargePoint(@RequestParam String token,
                                                             @RequestBody UserPointRequestDto requestDto) {
-        UserPointResponseDto responseDto = userService.chargePoint(token, requestDto);
+        UserPointResponseDto responseDto = userUseCase.chargePoint(token, requestDto);
         return ResponseEntity.ok(responseDto);
     }
 
@@ -76,7 +75,13 @@ public class UserController {
     )
     @GetMapping("/chargePoint")
     public ResponseEntity<UserPointResponseDto> getUserPoint(@RequestParam String token) {
-        UserPointResponseDto responseDto = userService.getUserPoint(token);
+        UserPointResponseDto responseDto = userUseCase.getUserPoint(token);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/position")
+    public ResponseEntity<UserPositionResponseDto> getUserQueuePosition(@RequestParam String token) {
+        UserPositionResponseDto responseDto = userUseCase.getUserQueuePosition(token);
         return ResponseEntity.ok(responseDto);
     }
 }

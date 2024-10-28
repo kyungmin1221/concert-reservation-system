@@ -28,17 +28,18 @@ public class User {
     @Column(nullable = false, unique = true)
     private String uuid;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Reservation> reservationList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<QueueEntry> queueEntryList = new ArrayList<>();
 
     @Builder
     public User(Long id, String name) {
         this.id = id;
         this.name = name;
-        this.uuid = UUID.randomUUID().toString();
+        this.uuid = (uuid != null) ? uuid : UUID.randomUUID().toString();
+        // this.uuid = UUID.randomUUID().toString();
     }
 
     // 잔액 충전

@@ -1,9 +1,11 @@
 package com.example.concertreservationsystem.domain.service;
 
+import com.example.concertreservationsystem.application.usecase.PaymentUseCase;
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import com.example.concertreservationsystem.domain.model.Concert;
 import com.example.concertreservationsystem.domain.model.Reservation;
 import com.example.concertreservationsystem.domain.model.User;
+import com.example.concertreservationsystem.domain.repo.QueueRepository;
 import com.example.concertreservationsystem.domain.repo.ReservationRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaReservationRepository;
@@ -15,11 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class PaymentService {
+public class PaymentService implements PaymentUseCase {
 
     private final JpaReservationRepository reservationRepository;
     private final UserRepository userRepository;
+    private final QueueRepository queueRepository;
     private final ReservationService reservationService;
+
+    @Override
     @Transactional
     public UserPaymentResponseDto paymentConcert(String token, UserPaymentRequestDto requestDto) {
 
@@ -39,11 +44,16 @@ public class PaymentService {
             throw new IllegalStateException("대기열 토큰이 유효하지 않거나 다른 유저입니다.");
         }
 
+        // 유저 보유 잔액에서 콘서트 금액을 차감
         user.minusPoints(concertPrice);
         userRepository.save(user);
 
+        // 예약 상태를 완료상태로 변경
         reservation.setStatusComplete();
         reservationRepository.save(reservation);
+
+        // 예약상태에서 완료가 되었으면 대기열에서 OUT
+        queueRepository.deleteByUser(user);
 
         return new UserPaymentResponseDto(
                 user.getPoint(),
