@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,4 +19,8 @@ public interface JpaSeatRepository extends JpaRepository<Seat,Long>{
     @Query("SELECT s FROM Seat s WHERE s.seatNumber = :seatNumber AND s.concertEvent.id = :eventId")
     Optional<Seat> findSeatForUpdate(@Param("seatNumber") String seatNumber,
                                      @Param("eventId") Long eventId);
+
+    @Query("SELECT s FROM Seat s WHERE s.concertEvent.id = :eventId AND s.available = true")
+    List<Seat> findAvailableSeatsByEventId(@Param("eventId") Long eventId);
+
 }
