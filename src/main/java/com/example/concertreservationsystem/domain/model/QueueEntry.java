@@ -37,4 +37,8 @@ public class QueueEntry {
         this.queuePosition = queuePosition;
         this.user = user;
     }
+
+    public void setQueuePosition(Long position) {
+        this.queuePosition -= 1;
+    }
 }
