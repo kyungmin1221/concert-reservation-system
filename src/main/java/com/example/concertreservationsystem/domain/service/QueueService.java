@@ -7,12 +7,14 @@ import com.example.concertreservationsystem.domain.repo.UserRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaQueueRepository;
 import com.example.concertreservationsystem.web.dto.queue.response.QueueResponseToken;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class QueueService implements QueueUseCase{
@@ -29,6 +31,7 @@ public class QueueService implements QueueUseCase{
 
         // 유저가 있을 경우
         if(queueRepository.existsByUser(user)) {
+            log.error("이미 유저가 대기열 진입한 상태 = {}", user.getName());
             throw new IllegalArgumentException("이미 유저가 대기열에 진입하였습니다. ");
         }
 

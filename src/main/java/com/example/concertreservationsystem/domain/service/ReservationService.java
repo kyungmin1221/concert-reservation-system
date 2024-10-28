@@ -13,6 +13,7 @@ import com.example.concertreservationsystem.web.dto.event.response.EventSeatResp
 import com.example.concertreservationsystem.web.dto.reservation.request.ReservationRequestDto;
 import com.example.concertreservationsystem.web.dto.reservation.response.ReservationResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReservationService implements ReservationUseCase {
@@ -47,6 +49,7 @@ public class ReservationService implements ReservationUseCase {
 
         // 예약이 불가능한 경우 로직 //
         if(!seat.isAvailable()) {
+            log.error("이미 예약이 되어 있는 좌석 = {}", seat);
             throw new IllegalStateException("이미 예약된 좌석입니다. 다른 좌석을 선택해주세요.");
         }
 
