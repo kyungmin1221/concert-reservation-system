@@ -27,7 +27,7 @@ public class Seat {
     @JoinColumn(name = "event_id")
     private ConcertEvent concertEvent;
 
-    @OneToOne(mappedBy = "seat", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "seat", fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
     private Reservation reservation;
 
     @Builder

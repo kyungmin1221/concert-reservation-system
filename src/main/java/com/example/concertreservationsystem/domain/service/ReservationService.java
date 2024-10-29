@@ -14,6 +14,7 @@ import com.example.concertreservationsystem.web.dto.reservation.response.Reserva
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -48,7 +49,8 @@ public class ReservationService implements ReservationUseCase {
 
         // 예약이 불가능한 경우 로직 //
         if(!seat.isAvailable()) {
-            log.error("이미 예약이 되어 있는 좌석 = {}", seat);
+            log.error("이미 예약한 유저 존재, 좌석에 접근한 유저 = {} ", user.getName());
+            log.error("이미 예약이 되어 있는 좌석 = {}", seat.getSeatNumber());
             throw new IllegalStateException("이미 예약된 좌석입니다. 다른 좌석을 선택해주세요.");
         }
 
