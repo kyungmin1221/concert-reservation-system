@@ -10,8 +10,10 @@ import com.example.concertreservationsystem.domain.repo.UserRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaReservationRepository;
 import com.example.concertreservationsystem.web.dto.user.request.UserPaymentRequestDto;
 import com.example.concertreservationsystem.web.dto.user.response.UserPaymentResponseDto;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,24 +46,45 @@ public class PaymentService implements PaymentUseCase {
         Long concertPrice = concert.getPrice();
 
         if(!user.equals(reservation.getUser())) {
-            log.error("예역을 한 유저가 맞는지 확인 필요 = {}", user.getName());
+            log.error("예약을 한 유저가 맞는지 확인 필요 = {}", user.getName());
             throw new IllegalStateException("대기열 토큰이 유효하지 않거나 다른 유저입니다.");
         }
 
+        try {
+            // 유저 보유 잔액에서 콘서트 금액을 차감
+            user.minusPoints(concertPrice);
+            userRepository.save(user);
+
+            // 예약 상태를 완료상태로 변경
+            reservation.setStatusComplete();
+            reservationRepository.save(reservation);
+
+            // 예약상태에서 완료가 되었으면 대기열에서 OUT
+            queueRepository.deleteByUser(user);
+
+            return new UserPaymentResponseDto(
+                    user.getPoint(),
+                    reservation.getStatus(),
+                    "예약 완료");
+        } catch (OptimisticLockException e) {
+            log.error("낙관적 락 예외 발생: {}", e.getMessage());
+            throw new IllegalStateException("동시 결제 시도가 감지되었습니다. 다시 시도해주세요.");
+        }
+
         // 유저 보유 잔액에서 콘서트 금액을 차감
-        user.minusPoints(concertPrice);
-        userRepository.save(user);
+//        user.minusPoints(concertPrice);
+//        userRepository.save(user);
 
-        // 예약 상태를 완료상태로 변경
-        reservation.setStatusComplete();
-        reservationRepository.save(reservation);
+//        // 예약 상태를 완료상태로 변경
+//        reservation.setStatusComplete();
+//        reservationRepository.save(reservation);
+//
+//        // 예약상태에서 완료가 되었으면 대기열에서 OUT
+//        queueRepository.deleteByUser(user);
 
-        // 예약상태에서 완료가 되었으면 대기열에서 OUT
-        queueRepository.deleteByUser(user);
-
-        return new UserPaymentResponseDto(
-                user.getPoint(),
-                reservation.getStatus(),
-                "예약 완료");
+//        return new UserPaymentResponseDto(
+//                user.getPoint(),
+//                reservation.getStatus(),
+//                "예약 완료");
     }
 }

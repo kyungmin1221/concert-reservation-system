@@ -28,6 +28,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String uuid;
 
+    @Version
+    private Long version;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Reservation> reservationList = new ArrayList<>();
 
@@ -39,8 +42,9 @@ public class User {
         this.id = id;
         this.name = name;
         this.uuid = (uuid != null) ? uuid : UUID.randomUUID().toString();
-        // this.uuid = UUID.randomUUID().toString();
+//         this.uuid = UUID.randomUUID().toString();
     }
+
 
     // 잔액 충전
     public void addPoints(Long point) {
