@@ -71,20 +71,5 @@ public class PaymentService implements PaymentUseCase {
             throw new IllegalStateException("동시 결제 시도가 감지되었습니다. 다시 시도해주세요.");
         }
 
-        // 유저 보유 잔액에서 콘서트 금액을 차감
-//        user.minusPoints(concertPrice);
-//        userRepository.save(user);
-
-//        // 예약 상태를 완료상태로 변경
-//        reservation.setStatusComplete();
-//        reservationRepository.save(reservation);
-//
-//        // 예약상태에서 완료가 되었으면 대기열에서 OUT
-//        queueRepository.deleteByUser(user);
-
-//        return new UserPaymentResponseDto(
-//                user.getPoint(),
-//                reservation.getStatus(),
-//                "예약 완료");
     }
 }

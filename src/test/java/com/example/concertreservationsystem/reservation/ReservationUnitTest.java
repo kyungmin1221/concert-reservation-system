@@ -61,7 +61,7 @@ public class ReservationUnitTest {
                 .build();
 
         ReservationRequestDto requestDto = new ReservationRequestDto();
-        // requestDto.setUuid(uuid);
+        //requestDto.setUuid(uuid);
         requestDto.setConcertName("Concert");
         requestDto.setEventId(eventId);
         requestDto.setSeatNumber(seatNumber);
@@ -69,7 +69,7 @@ public class ReservationUnitTest {
 
         // Mock 설정 - validateToken이 성공하도록 설정
         when(queueRepository.findByQueueToken(token)).thenReturn(Optional.of(queueEntry));  // 대기열 토큰이 있는 상황
-        when(userRepository.findByUuid(uuid)).thenReturn(Optional.of(user));
+      //  when(userRepository.findByUuid(uuid)).thenReturn(Optional.of(user));
         when(concertRepository.findById(concertId)).thenReturn(Optional.of(concert));
         when(seatRepository.findSeatForUpdate(seatNumber, eventId)).thenReturn(Optional.of(seat));
         when(seat.isAvailable()).thenReturn(true);  // 좌석이 사용 가능한 상태

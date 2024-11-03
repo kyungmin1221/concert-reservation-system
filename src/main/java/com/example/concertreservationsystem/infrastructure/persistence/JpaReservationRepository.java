@@ -1,7 +1,10 @@
 package com.example.concertreservationsystem.infrastructure.persistence;
 
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
+import com.example.concertreservationsystem.domain.model.Concert;
 import com.example.concertreservationsystem.domain.model.Reservation;
+import com.example.concertreservationsystem.domain.model.Seat;
+import com.example.concertreservationsystem.domain.model.User;
 import com.example.concertreservationsystem.domain.repo.ReservationRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -23,5 +26,8 @@ public interface JpaReservationRepository extends JpaRepository<Reservation,Long
 
     @Override
     Optional<Reservation> findById(Long reservationId);
+
+    @Override
+    List<Reservation> findByUserAndSeatAndConcert(User user, Seat seat, Concert concert);
 
 }

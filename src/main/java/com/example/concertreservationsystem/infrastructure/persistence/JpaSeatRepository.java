@@ -1,5 +1,6 @@
 package com.example.concertreservationsystem.infrastructure.persistence;
 
+import com.example.concertreservationsystem.domain.model.ConcertEvent;
 import com.example.concertreservationsystem.domain.model.Seat;
 import io.lettuce.core.dynamic.annotation.Param;
 import jakarta.persistence.LockModeType;
@@ -22,5 +23,7 @@ public interface JpaSeatRepository extends JpaRepository<Seat,Long>{
 
     @Query("SELECT s FROM Seat s WHERE s.concertEvent.id = :eventId AND s.available = true")
     List<Seat> findAvailableSeatsByEventId(@Param("eventId") Long eventId);
+
+    Optional<Seat> findBySeatNumberAndConcertEvent(String seatNumber, ConcertEvent concertEvent);
 
 }
