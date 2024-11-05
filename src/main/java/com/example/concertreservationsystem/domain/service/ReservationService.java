@@ -13,6 +13,9 @@ import com.example.concertreservationsystem.web.dto.reservation.request.Reservat
 import com.example.concertreservationsystem.web.dto.reservation.response.ReservationResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +38,10 @@ public class ReservationService implements ReservationUseCase {
 
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "availableConcertDates", key = "#token"),
+            @CacheEvict(value = "availableConcertSeats", key = "#token + '_' + #requestDto.eventId")
+    })
     public ReservationResponseDto rvConcertToUser(Long concertId, String token, ReservationRequestDto requestDto) {
 
         // 대기열 토큰 검증 먼저 수행
@@ -75,7 +82,9 @@ public class ReservationService implements ReservationUseCase {
     // 예약 가능한 날짜 및 좌석 조회
     // 날짜와 좌석이 false 인 것 리스트로 조회
     @Override
+    @Cacheable(value = "availableConcertDates", key = "#token", unless = "#result.isEmpty()")
     public List<EventDateResponseDto> getInfoDate(String token) {
+        log.info("getInfoDate 메서드가 호출.");
         validateToken(token);
         List<ConcertEvent> concertEvents = concertEventRepository.findAvailableConcertEvents();
         return concertEvents.stream()
@@ -87,7 +96,9 @@ public class ReservationService implements ReservationUseCase {
     }
 
     @Override
+    @Cacheable(value = "availableConcertSeats", key = "#token + '_' + #eventId" ,unless = "#result.isEmpty()")
     public List<EventSeatResponseDto> getInfoSeat(String token, Long eventId) {
+        log.info("좌석 캐시 확인");
         validateToken(token);
         List<Seat> seats = seatRepository.findAvailableSeatsByEventId(eventId);
         return seats.stream()
