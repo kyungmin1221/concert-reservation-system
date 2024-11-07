@@ -12,6 +12,7 @@ import com.example.concertreservationsystem.web.dto.user.response.UserPositionRe
 import com.example.concertreservationsystem.web.dto.user.response.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ public class UserService implements UserUseCase {
     private final UserRepository userRepository;
     private final ReservationService reservationService;
     private final QueueRepository queueRepository;
+    private final RedisTemplate<String,Object> redisTemplate;
 
     @Override
     @Transactional
@@ -68,9 +70,20 @@ public class UserService implements UserUseCase {
     // 본인의 대기번호 조회
     @Override
     public UserPositionResponseDto getUserQueuePosition(String token) {
-        QueueEntry queueEntry = queueRepository.findByQueueToken(token)
-                .orElseThrow(() -> new IllegalArgumentException("대기열 토큰이 유효하지 않습니다."));
+        // Redis를 이용한 대기열 토큰 검증
+        User user = reservationService.validateToken(token);
 
-        return new UserPositionResponseDto(queueEntry.getQueuePosition());
+        // 토큰의 대기열 순번 조회
+        Long position = redisTemplate.opsForZSet().rank("waiting_queue", token);
+
+        if (position == null) {
+            // 토큰이 대기열에 없을 경우 (이미 활성화되었거나 잘못된 토큰)
+            throw new IllegalArgumentException("대기열에 존재하지 않는 토큰입니다.");
+        }
+
+        // 대기 순번은 0부터 시작하므로, 1을 더하여 사용자에게 표시
+        position = position + 1;
+
+        return new UserPositionResponseDto(position);
     }
 }

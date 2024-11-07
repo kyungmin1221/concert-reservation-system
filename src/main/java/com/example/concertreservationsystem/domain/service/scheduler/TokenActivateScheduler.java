@@ -1,6 +1,7 @@
-package com.example.concertreservationsystem.domain.service;
+package com.example.concertreservationsystem.domain.service.scheduler;
 
 
+import com.example.concertreservationsystem.domain.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -11,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ReservationCancellationScheduler {
+public class TokenActivateScheduler {
 
     private final ReservationService reservationService;
 
@@ -20,7 +21,8 @@ public class ReservationCancellationScheduler {
     @Scheduled(fixedRate = 60000)  // 60초마다 작업 수행시간과 상관없이 실행
     public void cancelExpiredReservations() {
         log.info("======== cancel 스케쥴러 시작 ================");
-        reservationService.cancelReservationStatus();
+        //reservationService.cancelReservationStatus();
+        reservationService.activateTokens();
         log.info("======== cancel 스케쥴러 종료 ================");
     }
 }

@@ -7,6 +7,7 @@ import com.example.concertreservationsystem.domain.repo.*;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaConcertRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaReservationRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaSeatRepository;
+import com.example.concertreservationsystem.infrastructure.persistence.JpaUserRepository;
 import com.example.concertreservationsystem.web.dto.event.response.EventDateResponseDto;
 import com.example.concertreservationsystem.web.dto.event.response.EventSeatResponseDto;
 import com.example.concertreservationsystem.web.dto.reservation.request.ReservationRequestDto;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -35,6 +39,8 @@ public class ReservationService implements ReservationUseCase {
     private final JpaSeatRepository seatRepository;
     private final JpaReservationRepository reservationRepository;
     private final ConcertEventRepository concertEventRepository;
+    private final JpaUserRepository userRepository;
+    private final RedisTemplate<String,Object> redisTemplate;
 
     @Override
     @Transactional
@@ -62,7 +68,7 @@ public class ReservationService implements ReservationUseCase {
         }
 
         // 예약 가능 : 예약 상태를 true -> false 변경
-        seat.reserve();
+        seat.setUnAvailable();
 
         Reservation reservation = Reservation.builder()
                 .name(user.getName() + " 의 예약입니다.")
@@ -72,8 +78,12 @@ public class ReservationService implements ReservationUseCase {
                 .concert(concert)
                 .status(ReservationStatus.ONGOING)
                 .build();
-
         reservationRepository.save(reservation);
+
+        redisTemplate.opsForValue().set("reservation_token:"+ token, reservation.getId());
+
+        cleanupAfterReservation(token, String.valueOf(user.getId()));
+
         return new ReservationResponseDto(
                 requestDto.getConcertName(),
                 requestDto.getSeatNumber());
@@ -112,9 +122,8 @@ public class ReservationService implements ReservationUseCase {
 
     // 일정 시간이 지나면 예약을 취소하는 메서드
     public void cancelReservationStatus() {
-        LocalDateTime expiredTime = LocalDateTime.now().minusMinutes(5);    // 5분 대기
+        LocalDateTime expiredTime = LocalDateTime.now().minusMinutes(3);
 
-        // 대기열에서 가장 오래 있던 사람을 대기열에서 내보냄
         List<Reservation> expiredTimeReservation = reservationRepository
                 .findByStatusAndReservationDateBefore(ReservationStatus.ONGOING, expiredTime);
 
@@ -165,15 +174,88 @@ public class ReservationService implements ReservationUseCase {
     }
 
     // 대기열 토큰 여부 검증
+    // 대기열 토큰 검증 메서드
     public User validateToken(String queueToken) {
-        QueueEntry queueEntry = queueRepository.findByQueueToken(queueToken)
-                .orElseThrow(() -> new IllegalArgumentException("대기열 토큰이 없습니다."));
+        // 활성화된 토큰인지 확인
+        if (!redisTemplate.opsForSet().isMember("active_tokens", queueToken)) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
+        // 토큰에 연결된 유저 정보 조회
+        String userId = (String) redisTemplate.opsForHash().get("queue:token:" + queueToken, "userId");
+        if (userId == null) {
+            throw new IllegalArgumentException("토큰에 해당하는 유저 정보를 찾을 수 없습니다.");
+        }
+        Long checkuserId = Long.parseLong(userId);
 
-        return queueEntry.getUser();
+        return userRepository.findById(checkuserId)
+                .orElseThrow(() -> new IllegalArgumentException("유저 정보를 찾을 수 없습니다."));
     }
 
     public boolean isValidToken(String queueToken) {
         return queueRepository.existsByQueueToken(queueToken);
     }
 
+    // 활성화 토큰 처리 메서드
+    public void activateTokens() {
+        Set<Object> tokensToActivate = redisTemplate.opsForZSet().range("waiting_queue", 0, 4);
+
+        for (Object tokenObj : tokensToActivate) {
+            String token = tokenObj.toString();
+
+            // Active Tokens Set에 추가
+            redisTemplate.opsForSet().add("active_tokens", token);
+
+            // 활성화 토큰에 만료 시간 설정 (TTL 적용) - 10분
+            redisTemplate.opsForValue().set("active_tokens:" + token, "", 10, TimeUnit.MINUTES);
+
+            // 대기열에서 제거
+            redisTemplate.opsForZSet().remove("waiting_queue", token);
+        }
+    }
+
+    // 만료된 활성화 토큰의 예약을 취소하는 메서드
+    public void cancelReservationByToken(String token) {
+        // Redis에서 예약 ID 조회
+        String reservationIdStr = (String) redisTemplate.opsForValue().get("reservation_token:" + token);
+        if (reservationIdStr == null) {
+            // 예약이 없을 경우 처리 로직
+            return;
+        }
+
+        Long reservationId = Long.parseLong(reservationIdStr);
+
+        // 예약 ID로 예약 조회
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 예약을 찾을 수 없습니다."));
+
+        // 예약 취소 처리
+        reservation.setStatusCanceled();
+        reservationRepository.save(reservation);
+
+        // 좌석 상태 변경
+        Seat seat = reservation.getSeat();
+        seat.isAvailable(); // 좌석 상태 변경 메서드
+        seatRepository.save(seat);
+
+        // Redis에서 매핑 제거
+        redisTemplate.delete("reservation_token:" + token);
+
+        // 활성화 토큰 및 관련 키 삭제
+        cleanupAfterReservation(token, null);
+    }
+
+    // 예약 완료 또는 취소 후 정리 작업
+    private void cleanupAfterReservation(String token, String userUuid) {
+        // 활성화 토큰에서 제거
+        redisTemplate.opsForSet().remove("active_tokens", token);
+        redisTemplate.delete("active_tokens:" + token);
+
+        // 토큰 메타데이터 삭제
+        redisTemplate.delete("queue:token:" + token);
+
+        // 유저의 대기열 키 삭제
+        if (userUuid != null) {
+            redisTemplate.delete("user_in_queue:" + userUuid);
+        }
+    }
 }

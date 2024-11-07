@@ -45,4 +45,8 @@ public class Seat {
     public void setAvailable() {
         this.available = true;
     }
+
+    public void setUnAvailable() {
+        this.available = false;
+    }
 }
