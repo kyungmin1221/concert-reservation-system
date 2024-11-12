@@ -1,5 +1,6 @@
 package com.example.concertreservationsystem.api.controller.concert;
 
+import com.example.concertreservationsystem.application.concert.facade.ConcertFacade;
 import com.example.concertreservationsystem.application.usecase.ConcertUseCase;
 import com.example.concertreservationsystem.application.concert.dto.request.ConcertRequestDto;
 import com.example.concertreservationsystem.application.concert.dto.response.ConcertResponseDto;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ConcertController {
 
-    private final ConcertUseCase concertUseCase;
+    private final ConcertFacade concertFacade;
 
     /**
      * 콘서트 등록
@@ -38,7 +39,7 @@ public class ConcertController {
     )
     @PostMapping
     public ResponseEntity<ConcertResponseDto> registerConcert(@RequestBody ConcertRequestDto requestDto) {
-        ConcertResponseDto responseDto = concertUseCase.registerConcert(requestDto);
+        ConcertResponseDto responseDto = concertFacade.registerConcert(requestDto);
         return ResponseEntity.ok(responseDto);
     }
 }
