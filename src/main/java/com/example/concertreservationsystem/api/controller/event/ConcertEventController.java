@@ -1,5 +1,6 @@
 package com.example.concertreservationsystem.api.controller.event;
 
+import com.example.concertreservationsystem.application.event.facade.ConcertEventFacade;
 import com.example.concertreservationsystem.application.usecase.ConcertEventUseCase;
 import com.example.concertreservationsystem.application.event.dto.request.EventRequestDto;
 import com.example.concertreservationsystem.application.event.dto.response.EventResponseDto;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ConcertEventController {
 
-    private final ConcertEventUseCase concertEventUseCase;
+    private final ConcertEventFacade concertEventFacade;
 
     @Operation(
             summary = "콘서트 이벤트 생성",
@@ -34,7 +35,7 @@ public class ConcertEventController {
     )
     @PostMapping
     private ResponseEntity<EventResponseDto> registerConcertEvent(@RequestBody EventRequestDto requestDto) {
-        EventResponseDto responseDto = concertEventUseCase.registerConcertEvent(requestDto);
+        EventResponseDto responseDto = concertEventFacade.registerConcertEvent(requestDto);
         return ResponseEntity.ok(responseDto);
 
     }
