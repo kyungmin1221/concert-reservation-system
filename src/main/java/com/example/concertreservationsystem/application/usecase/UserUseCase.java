@@ -1,10 +1,10 @@
 package com.example.concertreservationsystem.application.usecase;
 
-import com.example.concertreservationsystem.web.dto.user.request.UserPointRequestDto;
-import com.example.concertreservationsystem.web.dto.user.request.UserRequestDto;
-import com.example.concertreservationsystem.web.dto.user.response.UserPointResponseDto;
-import com.example.concertreservationsystem.web.dto.user.response.UserPositionResponseDto;
-import com.example.concertreservationsystem.web.dto.user.response.UserResponseDto;
+import com.example.concertreservationsystem.application.user.dto.request.UserPointRequestDto;
+import com.example.concertreservationsystem.application.user.dto.request.UserRequestDto;
+import com.example.concertreservationsystem.application.user.dto.response.UserPointResponseDto;
+import com.example.concertreservationsystem.application.user.dto.response.UserPositionResponseDto;
+import com.example.concertreservationsystem.application.user.dto.response.UserResponseDto;
 import org.springframework.stereotype.Component;
 
 @Component

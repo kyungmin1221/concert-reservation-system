@@ -1,22 +1,19 @@
 package com.example.concertreservationsystem;
 
 import com.example.concertreservationsystem.domain.model.*;
-import com.example.concertreservationsystem.domain.repo.ConcertEventRepository;
 import com.example.concertreservationsystem.domain.repo.ConcertRepository;
 import com.example.concertreservationsystem.domain.repo.QueueRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
-import com.example.concertreservationsystem.domain.service.ReservationService;
+import com.example.concertreservationsystem.application.reservation.facade.ReservationService;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaConcertEventRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaSeatRepository;
-import com.example.concertreservationsystem.web.dto.reservation.request.ReservationRequestDto;
-import com.example.concertreservationsystem.web.dto.reservation.response.ReservationResponseDto;
+import com.example.concertreservationsystem.application.reservation.dto.request.ReservationRequestDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

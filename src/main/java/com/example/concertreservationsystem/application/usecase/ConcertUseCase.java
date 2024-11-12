@@ -1,8 +1,8 @@
 package com.example.concertreservationsystem.application.usecase;
 
 
-import com.example.concertreservationsystem.web.dto.concert.request.ConcertRequestDto;
-import com.example.concertreservationsystem.web.dto.concert.response.ConcertResponseDto;
+import com.example.concertreservationsystem.application.concert.dto.request.ConcertRequestDto;
+import com.example.concertreservationsystem.application.concert.dto.response.ConcertResponseDto;
 import org.springframework.stereotype.Component;
 
 @Component

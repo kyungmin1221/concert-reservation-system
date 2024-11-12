@@ -2,8 +2,8 @@ package com.example.concertreservationsystem.concert;
 
 import com.example.concertreservationsystem.domain.model.Concert;
 import com.example.concertreservationsystem.domain.repo.ConcertRepository;
-import com.example.concertreservationsystem.domain.service.ConcertService;
-import com.example.concertreservationsystem.web.dto.concert.request.ConcertRequestDto;
+import com.example.concertreservationsystem.application.concert.facade.ConcertService;
+import com.example.concertreservationsystem.application.concert.dto.request.ConcertRequestDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
