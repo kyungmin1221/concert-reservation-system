@@ -77,7 +77,7 @@ public class ReservationService  {
                 .build();
         reservationRepository.save(reservation);
 
-        redisTemplate.opsForValue().set("reservation_token:"+ token, reservation.getId());
+        redisTemplate.opsForValue().set("reservation_token:"+ token, String.valueOf(reservation.getId()));
 
         cleanupAfterReservation(token, String.valueOf(user.getId()));
 
@@ -176,11 +176,18 @@ public class ReservationService  {
             throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
         }
         // 토큰에 연결된 유저 정보 조회
-        String userId = (String) redisTemplate.opsForHash().get("queue:token:" + queueToken, "userId");
+        Object userId = redisTemplate.opsForHash().get("queue:token:" + queueToken, "userId");
         if (userId == null) {
             throw new IllegalArgumentException("토큰에 해당하는 유저 정보를 찾을 수 없습니다.");
         }
-        Long checkuserId = Long.parseLong(userId);
+        String userIdStr = userId.toString();
+        Long checkuserId;
+
+        try {
+            checkuserId = Long.parseLong(userIdStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("유효하지 않은 ID 형식");
+        }
 
         return userRepository.findById(checkuserId)
                 .orElseThrow(() -> new IllegalArgumentException("유저 정보를 찾을 수 없습니다."));
