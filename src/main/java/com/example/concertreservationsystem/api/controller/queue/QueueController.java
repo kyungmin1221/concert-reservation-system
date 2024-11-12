@@ -1,6 +1,7 @@
 package com.example.concertreservationsystem.api.controller.queue;
 
 
+import com.example.concertreservationsystem.application.queue.facade.QueueFacade;
 import com.example.concertreservationsystem.application.usecase.QueueUseCase;
 import com.example.concertreservationsystem.application.queue.dto.QueueResponseToken;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/queues")
 public class QueueController {
 
-    private final QueueUseCase queueUseCase;
+    private final QueueFacade queueFacade;
 
     @Operation(
             summary = "콘서트 대기열 생성",
@@ -32,7 +33,7 @@ public class QueueController {
     )
     @PostMapping
     public ResponseEntity<QueueResponseToken> addQueueToUser(@RequestParam String uuid) {
-        QueueResponseToken responseToken = queueUseCase.addQueueToUser(uuid);
+        QueueResponseToken responseToken = queueFacade.addQueueToUser(uuid);
         return ResponseEntity.ok(responseToken);
     }
 }
