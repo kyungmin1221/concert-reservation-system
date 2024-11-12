@@ -4,6 +4,7 @@ import com.example.concertreservationsystem.application.event.dto.response.Event
 import com.example.concertreservationsystem.application.event.dto.response.EventSeatResponseDto;
 import com.example.concertreservationsystem.application.reservation.dto.request.ReservationRequestDto;
 import com.example.concertreservationsystem.application.reservation.dto.response.ReservationResponseDto;
+import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

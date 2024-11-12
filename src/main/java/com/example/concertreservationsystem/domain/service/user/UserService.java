@@ -1,6 +1,6 @@
-package com.example.concertreservationsystem.application.user.facade;
+package com.example.concertreservationsystem.domain.service.user;
 
-import com.example.concertreservationsystem.application.reservation.facade.ReservationService;
+import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
 import com.example.concertreservationsystem.application.usecase.UserUseCase;
 import com.example.concertreservationsystem.domain.model.User;
 import com.example.concertreservationsystem.domain.repo.QueueRepository;
@@ -19,14 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserUseCase {
+public class UserService  {
 
     private final UserRepository userRepository;
     private final ReservationService reservationService;
     private final QueueRepository queueRepository;
     private final RedisTemplate<String,Object> redisTemplate;
 
-    @Override
+
     @Transactional
     public UserResponseDto registerUser(UserRequestDto requestDto) {
 
@@ -46,7 +46,6 @@ public class UserService implements UserUseCase {
 
 
     // 잔액 충전 (대기열 토큰 필수)
-    @Override
     @Transactional
     public UserPointResponseDto chargePoint(String token, UserPointRequestDto requestDto) {
 
@@ -61,14 +60,12 @@ public class UserService implements UserUseCase {
     }
 
     // 잔액 조회 (대기열 토큰 필수)
-    @Override
     public UserPointResponseDto getUserPoint(String token) {
         User user = reservationService.validateToken(token);
         return new UserPointResponseDto(user.getPoint());
     }
 
     // 본인의 대기번호 조회
-    @Override
     public UserPositionResponseDto getUserQueuePosition(String token) {
         // Redis를 이용한 대기열 토큰 검증
         User user = reservationService.validateToken(token);

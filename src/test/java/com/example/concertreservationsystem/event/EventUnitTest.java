@@ -3,7 +3,7 @@ package com.example.concertreservationsystem.event;
 import com.example.concertreservationsystem.domain.model.Concert;
 import com.example.concertreservationsystem.domain.model.ConcertEvent;
 import com.example.concertreservationsystem.domain.repo.ConcertRepository;
-import com.example.concertreservationsystem.application.event.facade.ConcertEventService;
+import com.example.concertreservationsystem.domain.service.event.ConcertEventService;
 import com.example.concertreservationsystem.infrastructure.config.SeatInitializer;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaConcertEventRepository;
 import com.example.concertreservationsystem.application.event.dto.request.EventRequestDto;

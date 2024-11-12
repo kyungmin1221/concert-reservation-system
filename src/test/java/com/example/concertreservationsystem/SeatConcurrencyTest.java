@@ -5,8 +5,8 @@ import com.example.concertreservationsystem.domain.model.*;
 import com.example.concertreservationsystem.domain.repo.ConcertRepository;
 import com.example.concertreservationsystem.domain.repo.ReservationRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
-import com.example.concertreservationsystem.application.payment.facade.PaymentService;
-import com.example.concertreservationsystem.application.reservation.facade.ReservationService;
+import com.example.concertreservationsystem.domain.service.payment.PaymentService;
+import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaConcertEventRepository;
 import static org.junit.jupiter.api.Assertions.*;
 

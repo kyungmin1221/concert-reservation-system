@@ -3,7 +3,7 @@ package com.example.concertreservationsystem.reservation;
 import com.example.concertreservationsystem.domain.model.*;
 import com.example.concertreservationsystem.domain.repo.QueueRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
-import com.example.concertreservationsystem.application.reservation.facade.ReservationService;
+import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaConcertRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaReservationRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaSeatRepository;

@@ -1,7 +1,7 @@
 package com.example.concertreservationsystem.application.scheduler;
 
 
-import com.example.concertreservationsystem.application.reservation.facade.ReservationService;
+import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

@@ -1,4 +1,4 @@
-package com.example.concertreservationsystem.application.queue.facade;
+package com.example.concertreservationsystem.domain.service.queue;
 
 import com.example.concertreservationsystem.application.usecase.QueueUseCase;
 import com.example.concertreservationsystem.domain.model.User;
@@ -18,12 +18,11 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class QueueService implements QueueUseCase{
+public class QueueService{
 
     private final UserRepository userRepository;
     private final JpaQueueRepository queueRepository;
     private final RedisTemplate<String, Object> redisTemplate;
-    @Override
     @Transactional
     public QueueResponseToken addQueueToUser(String uuid) {
 

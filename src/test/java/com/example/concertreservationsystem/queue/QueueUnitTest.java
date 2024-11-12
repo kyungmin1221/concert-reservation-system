@@ -2,7 +2,7 @@ package com.example.concertreservationsystem.queue;
 
 import com.example.concertreservationsystem.domain.model.User;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
-import com.example.concertreservationsystem.application.queue.facade.QueueService;
+import com.example.concertreservationsystem.domain.service.queue.QueueService;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaQueueRepository;
 import com.example.concertreservationsystem.application.queue.dto.QueueResponseToken;
 import org.junit.jupiter.api.DisplayName;

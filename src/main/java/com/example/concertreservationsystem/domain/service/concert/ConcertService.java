@@ -1,4 +1,4 @@
-package com.example.concertreservationsystem.application.concert.facade;
+package com.example.concertreservationsystem.domain.service.concert;
 
 import com.example.concertreservationsystem.application.usecase.ConcertUseCase;
 import com.example.concertreservationsystem.domain.model.Concert;
@@ -13,12 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ConcertService implements ConcertUseCase{
+public class ConcertService{
 
     private final ConcertRepository concertRepository;
 
-
-    @Override
     @Transactional
     public ConcertResponseDto registerConcert(ConcertRequestDto requestDto) {
 

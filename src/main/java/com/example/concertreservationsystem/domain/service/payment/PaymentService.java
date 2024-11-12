@@ -1,6 +1,6 @@
-package com.example.concertreservationsystem.application.payment.facade;
+package com.example.concertreservationsystem.domain.service.payment;
 
-import com.example.concertreservationsystem.application.reservation.facade.ReservationService;
+import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
 import com.example.concertreservationsystem.application.usecase.PaymentUseCase;
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import com.example.concertreservationsystem.domain.model.Concert;
@@ -20,14 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PaymentService implements PaymentUseCase {
+public class PaymentService {
 
     private final JpaReservationRepository reservationRepository;
     private final UserRepository userRepository;
     private final QueueRepository queueRepository;
     private final ReservationService reservationService;
 
-    @Override
     @Transactional
     public UserPaymentResponseDto paymentConcert(String token, UserPaymentRequestDto requestDto) {
 

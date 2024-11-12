@@ -1,4 +1,4 @@
-package com.example.concertreservationsystem.application.reservation.facade;
+package com.example.concertreservationsystem.domain.service.reservation;
 
 import com.example.concertreservationsystem.application.usecase.ReservationUseCase;
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ReservationService implements ReservationUseCase {
+public class ReservationService  {
 
     private final QueueRepository queueRepository;
     private final JpaConcertRepository concertRepository;
@@ -41,7 +41,6 @@ public class ReservationService implements ReservationUseCase {
     private final JpaUserRepository userRepository;
     private final RedisTemplate<String,Object> redisTemplate;
 
-    @Override
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "availableConcertDates", key = "#token"),
@@ -90,7 +89,6 @@ public class ReservationService implements ReservationUseCase {
 
     // 예약 가능한 날짜 및 좌석 조회
     // 날짜와 좌석이 false 인 것 리스트로 조회
-    @Override
     @Cacheable(value = "availableConcertDates", key = "#token", unless = "#result.isEmpty()")
     public List<EventDateResponseDto> getInfoDate(String token) {
         log.info("getInfoDate 메서드가 호출.");
@@ -104,7 +102,6 @@ public class ReservationService implements ReservationUseCase {
                 .collect(Collectors.toList());
     }
 
-    @Override
     @Cacheable(value = "availableConcertSeats", key = "#token + '_' + #eventId" ,unless = "#result.isEmpty()")
     public List<EventSeatResponseDto> getInfoSeat(String token, Long eventId) {
         log.info("좌석 캐시 확인");

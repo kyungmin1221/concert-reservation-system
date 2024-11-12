@@ -4,7 +4,7 @@ import com.example.concertreservationsystem.domain.model.*;
 import com.example.concertreservationsystem.domain.repo.ConcertRepository;
 import com.example.concertreservationsystem.domain.repo.QueueRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
-import com.example.concertreservationsystem.application.reservation.facade.ReservationService;
+import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaConcertEventRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaSeatRepository;
 import com.example.concertreservationsystem.application.reservation.dto.request.ReservationRequestDto;

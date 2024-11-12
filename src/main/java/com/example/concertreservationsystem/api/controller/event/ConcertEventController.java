@@ -1,7 +1,6 @@
 package com.example.concertreservationsystem.api.controller.event;
 
 import com.example.concertreservationsystem.application.event.facade.ConcertEventFacade;
-import com.example.concertreservationsystem.application.usecase.ConcertEventUseCase;
 import com.example.concertreservationsystem.application.event.dto.request.EventRequestDto;
 import com.example.concertreservationsystem.application.event.dto.response.EventResponseDto;
 import io.swagger.v3.oas.annotations.Operation;

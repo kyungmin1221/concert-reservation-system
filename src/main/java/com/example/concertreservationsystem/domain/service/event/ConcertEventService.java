@@ -1,4 +1,4 @@
-package com.example.concertreservationsystem.application.event.facade;
+package com.example.concertreservationsystem.domain.service.event;
 
 
 import com.example.concertreservationsystem.application.usecase.ConcertEventUseCase;
@@ -19,13 +19,12 @@ import java.time.LocalDate;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ConcertEventService implements ConcertEventUseCase{
+public class ConcertEventService{
 
     private final ConcertRepository concertRepository;
     private final JpaConcertEventRepository concertEventRepository;
     private final SeatInitializer seatInitializer;
 
-    @Override
     @Transactional
     public EventResponseDto registerConcertEvent(EventRequestDto requestDto) {
 

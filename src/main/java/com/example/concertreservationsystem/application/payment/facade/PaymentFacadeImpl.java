@@ -2,6 +2,7 @@ package com.example.concertreservationsystem.application.payment.facade;
 
 import com.example.concertreservationsystem.application.payment.dto.request.UserPaymentRequestDto;
 import com.example.concertreservationsystem.application.payment.dto.response.UserPaymentResponseDto;
+import com.example.concertreservationsystem.domain.service.payment.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
