@@ -79,7 +79,7 @@ public class ReservationService  {
 
         redisTemplate.opsForValue().set("reservation_token:"+ token, String.valueOf(reservation.getId()));
 
-        cleanupAfterReservation(token, String.valueOf(user.getId()));
+       // cleanupAfterReservation(token, String.valueOf(user.getId()));
 
         return new ReservationResponseDto(
                 requestDto.getConcertName(),
@@ -112,6 +112,7 @@ public class ReservationService  {
                 ))
                 .collect(Collectors.toList());
     }
+
 
 
 
@@ -192,6 +193,36 @@ public class ReservationService  {
         return userRepository.findById(checkuserId)
                 .orElseThrow(() -> new IllegalArgumentException("유저 정보를 찾을 수 없습니다."));
     }
+
+    public User validateAnyToken(String token) {
+        // 1. 활성화된 토큰인지 확인
+        Boolean isActive = redisTemplate.opsForSet().isMember("active_tokens", token);
+
+        // 2. 대기열에 있는 토큰인지 확인
+        Long rank = redisTemplate.opsForZSet().rank("waiting_queue", token);
+
+        if (Boolean.TRUE.equals(isActive) || rank != null) {
+            // 토큰에 연결된 유저 정보 조회
+            Object userId = redisTemplate.opsForHash().get("queue:token:" + token, "userId");
+            if (userId == null) {
+                throw new IllegalArgumentException("토큰에 해당하는 유저 정보를 찾을 수 없습니다.");
+            }
+            String userIdStr = userId.toString();
+            Long checkUserId;
+
+            try {
+                checkUserId = Long.parseLong(userIdStr);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("유효하지 않은 ID 형식입니다.");
+            }
+
+            return userRepository.findById(checkUserId)
+                    .orElseThrow(() -> new IllegalArgumentException("유저 정보를 찾을 수 없습니다."));
+        } else {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
+    }
+
 
     public boolean isValidToken(String queueToken) {
         return queueRepository.existsByQueueToken(queueToken);

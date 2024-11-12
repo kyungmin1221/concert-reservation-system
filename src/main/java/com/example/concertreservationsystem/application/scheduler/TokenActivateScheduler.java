@@ -20,10 +20,9 @@ public class TokenActivateScheduler {
     @Transactional
     @Scheduled(fixedRate = 60000)  // 60초마다 작업 수행시간과 상관없이 실행
     public void cancelExpiredReservations() {
-        log.info("======== cancel 스케쥴러 시작 ================");
-        //reservationService.cancelReservationStatus();
+        log.info("======== active_tokens 활성화 스케쥴러 실행 시작 ================");
         reservationService.activateTokens();
-        log.info("======== cancel 스케쥴러 종료 ================");
+        log.info("========  active_tokens 활성화 스케쥴러 실행완료 ================");
     }
 }
 

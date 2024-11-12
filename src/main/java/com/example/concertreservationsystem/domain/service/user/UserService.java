@@ -48,7 +48,7 @@ public class UserService  {
     public UserPointResponseDto chargePoint(String token, UserPointRequestDto requestDto) {
 
         // 대기열 토큰 검증
-        User user = reservationService.validateToken(token);
+        User user = reservationService.validateAnyToken(token);
 
         // 잔액 충전
         user.addPoints(requestDto.getPoint());
@@ -59,14 +59,14 @@ public class UserService  {
 
     // 잔액 조회 (대기열 토큰 필수)
     public UserPointResponseDto getUserPoint(String token) {
-        User user = reservationService.validateToken(token);
+        User user = reservationService.validateAnyToken(token);
         return new UserPointResponseDto(user.getPoint());
     }
 
     // 본인의 대기번호 조회
     public UserPositionResponseDto getUserQueuePosition(String token) {
         // Redis를 이용한 대기열 토큰 검증
-        User user = reservationService.validateToken(token);
+        User user = reservationService.validateAnyToken(token);
 
         // 토큰의 대기열 순번 조회
         Long position = redisTemplate.opsForZSet().rank("waiting_queue", token);
