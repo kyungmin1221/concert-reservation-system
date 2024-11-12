@@ -6,6 +6,7 @@ import com.example.concertreservationsystem.application.user.dto.request.UserReq
 import com.example.concertreservationsystem.application.user.dto.response.UserPointResponseDto;
 import com.example.concertreservationsystem.application.user.dto.response.UserPositionResponseDto;
 import com.example.concertreservationsystem.application.user.dto.response.UserResponseDto;
+import com.example.concertreservationsystem.application.user.facade.UserFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserUseCase userUseCase;
+    private final UserFacade userFacade;
 
     /**
      * 유저 등록
@@ -36,7 +37,7 @@ public class UserController {
                     """)
     @PostMapping("/signin")
     public ResponseEntity<UserResponseDto> registerUser(@RequestBody  UserRequestDto requestDto) {
-        UserResponseDto responseDto = userUseCase.registerUser(requestDto);
+        UserResponseDto responseDto = userFacade.registerUser(requestDto);
         return ResponseEntity.ok(responseDto);
     }
 
@@ -56,7 +57,7 @@ public class UserController {
     @PostMapping("/charge")
     public ResponseEntity<UserPointResponseDto> chargePoint(@RequestParam String token,
                                                             @RequestBody UserPointRequestDto requestDto) {
-        UserPointResponseDto responseDto = userUseCase.chargePoint(token, requestDto);
+        UserPointResponseDto responseDto = userFacade.chargePoint(token, requestDto);
         return ResponseEntity.ok(responseDto);
     }
 
@@ -74,13 +75,13 @@ public class UserController {
     )
     @GetMapping("/chargePoint")
     public ResponseEntity<UserPointResponseDto> getUserPoint(@RequestParam String token) {
-        UserPointResponseDto responseDto = userUseCase.getUserPoint(token);
+        UserPointResponseDto responseDto = userFacade.getUserPoint(token);
         return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping("/position")
     public ResponseEntity<UserPositionResponseDto> getUserQueuePosition(@RequestParam String token) {
-        UserPositionResponseDto responseDto = userUseCase.getUserQueuePosition(token);
+        UserPositionResponseDto responseDto = userFacade.getUserQueuePosition(token);
         return ResponseEntity.ok(responseDto);
     }
 }
