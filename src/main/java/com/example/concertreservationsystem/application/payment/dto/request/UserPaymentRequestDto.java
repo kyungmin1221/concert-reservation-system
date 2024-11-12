@@ -1,4 +1,4 @@
-package com.example.concertreservationsystem.application.user.dto.request;
+package com.example.concertreservationsystem.application.payment.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;

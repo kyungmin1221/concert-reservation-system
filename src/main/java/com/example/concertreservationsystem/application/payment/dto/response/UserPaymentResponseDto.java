@@ -1,4 +1,4 @@
-package com.example.concertreservationsystem.application.user.dto.response;
+package com.example.concertreservationsystem.application.payment.dto.response;
 
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import lombok.Getter;

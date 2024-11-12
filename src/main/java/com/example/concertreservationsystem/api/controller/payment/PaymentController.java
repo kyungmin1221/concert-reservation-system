@@ -1,8 +1,9 @@
 package com.example.concertreservationsystem.api.controller.payment;
 
+import com.example.concertreservationsystem.application.payment.facade.PaymentFacade;
 import com.example.concertreservationsystem.application.usecase.PaymentUseCase;
-import com.example.concertreservationsystem.application.user.dto.request.UserPaymentRequestDto;
-import com.example.concertreservationsystem.application.user.dto.response.UserPaymentResponseDto;
+import com.example.concertreservationsystem.application.payment.dto.request.UserPaymentRequestDto;
+import com.example.concertreservationsystem.application.payment.dto.response.UserPaymentResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PaymentController {
 
-    private final PaymentUseCase paymentUseCase;
+    private final PaymentFacade paymentFacade;
 
     @Operation(summary = "콘서트 결제" ,
             description =
@@ -27,7 +28,7 @@ public class PaymentController {
     @PostMapping
     public ResponseEntity<UserPaymentResponseDto> paymentConcert(@RequestParam String token,
                                                                  @RequestBody UserPaymentRequestDto requestDto) {
-        UserPaymentResponseDto responseDto = paymentUseCase.paymentConcert(token, requestDto);
+        UserPaymentResponseDto responseDto = paymentFacade.paymentConcert(token, requestDto);
         return ResponseEntity.ok(responseDto);
     }
 }

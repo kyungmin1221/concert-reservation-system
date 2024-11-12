@@ -1,4 +1,4 @@
-package com.example.concertreservationsystem.application.user.facade;
+package com.example.concertreservationsystem.application.payment.facade;
 
 import com.example.concertreservationsystem.application.reservation.facade.ReservationService;
 import com.example.concertreservationsystem.application.usecase.PaymentUseCase;
@@ -9,8 +9,8 @@ import com.example.concertreservationsystem.domain.model.User;
 import com.example.concertreservationsystem.domain.repo.QueueRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaReservationRepository;
-import com.example.concertreservationsystem.application.user.dto.request.UserPaymentRequestDto;
-import com.example.concertreservationsystem.application.user.dto.response.UserPaymentResponseDto;
+import com.example.concertreservationsystem.application.payment.dto.request.UserPaymentRequestDto;
+import com.example.concertreservationsystem.application.payment.dto.response.UserPaymentResponseDto;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
