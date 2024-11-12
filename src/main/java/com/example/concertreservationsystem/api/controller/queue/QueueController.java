@@ -3,6 +3,7 @@ package com.example.concertreservationsystem.api.controller.queue;
 
 import com.example.concertreservationsystem.application.queue.facade.QueueFacade;
 import com.example.concertreservationsystem.application.queue.dto.QueueResponseToken;
+import com.example.concertreservationsystem.domain.model.QueueEntry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,7 +33,8 @@ public class QueueController {
     )
     @PostMapping
     public ResponseEntity<QueueResponseToken> addQueueToUser(@RequestParam String uuid) {
-        QueueResponseToken responseToken = queueFacade.addQueueToUser(uuid);
+        QueueEntry entry = queueFacade.addQueueToUser(uuid);
+        QueueResponseToken responseToken = QueueResponseToken.from(entry);
         return ResponseEntity.ok(responseToken);
     }
 }

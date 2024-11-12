@@ -1,7 +1,8 @@
 package com.example.concertreservationsystem.application.queue.facade;
 
 import com.example.concertreservationsystem.application.queue.dto.QueueResponseToken;
+import com.example.concertreservationsystem.domain.model.QueueEntry;
 
 public interface QueueFacade {
-    public QueueResponseToken addQueueToUser(String uuid);
+    public QueueEntry addQueueToUser(String uuid);
 }
