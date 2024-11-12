@@ -1,6 +1,5 @@
 package com.example.concertreservationsystem.domain.service.queue;
 
-import com.example.concertreservationsystem.application.usecase.QueueUseCase;
 import com.example.concertreservationsystem.domain.model.User;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaQueueRepository;

@@ -1,6 +1,5 @@
 package com.example.concertreservationsystem.api.controller.user;
 
-import com.example.concertreservationsystem.application.usecase.UserUseCase;
 import com.example.concertreservationsystem.application.user.dto.request.UserPointRequestDto;
 import com.example.concertreservationsystem.application.user.dto.request.UserRequestDto;
 import com.example.concertreservationsystem.application.user.dto.response.UserPointResponseDto;

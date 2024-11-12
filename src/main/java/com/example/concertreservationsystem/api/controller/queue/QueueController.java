@@ -2,7 +2,6 @@ package com.example.concertreservationsystem.api.controller.queue;
 
 
 import com.example.concertreservationsystem.application.queue.facade.QueueFacade;
-import com.example.concertreservationsystem.application.usecase.QueueUseCase;
 import com.example.concertreservationsystem.application.queue.dto.QueueResponseToken;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

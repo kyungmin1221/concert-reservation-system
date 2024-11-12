@@ -1,7 +1,6 @@
 package com.example.concertreservationsystem.domain.service.user;
 
 import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
-import com.example.concertreservationsystem.application.usecase.UserUseCase;
 import com.example.concertreservationsystem.domain.model.User;
 import com.example.concertreservationsystem.domain.repo.QueueRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
@@ -23,7 +22,6 @@ public class UserService  {
 
     private final UserRepository userRepository;
     private final ReservationService reservationService;
-    private final QueueRepository queueRepository;
     private final RedisTemplate<String,Object> redisTemplate;
 
 

@@ -1,7 +1,6 @@
 package com.example.concertreservationsystem.api.controller.reservation;
 
 import com.example.concertreservationsystem.application.reservation.facade.ReservationFacade;
-import com.example.concertreservationsystem.application.usecase.ReservationUseCase;
 import com.example.concertreservationsystem.application.event.dto.response.EventDateResponseDto;
 import com.example.concertreservationsystem.application.event.dto.response.EventSeatResponseDto;
 import com.example.concertreservationsystem.application.reservation.dto.request.ReservationRequestDto;

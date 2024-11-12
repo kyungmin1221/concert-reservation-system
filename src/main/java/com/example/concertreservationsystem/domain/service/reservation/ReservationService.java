@@ -1,6 +1,5 @@
 package com.example.concertreservationsystem.domain.service.reservation;
 
-import com.example.concertreservationsystem.application.usecase.ReservationUseCase;
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import com.example.concertreservationsystem.domain.model.*;
 import com.example.concertreservationsystem.domain.repo.*;
