@@ -2,18 +2,22 @@ package com.example.concertreservationsystem.domain.service.user;
 
 import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
 import com.example.concertreservationsystem.domain.model.User;
-import com.example.concertreservationsystem.domain.repo.QueueRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
 import com.example.concertreservationsystem.application.user.dto.request.UserPointRequestDto;
 import com.example.concertreservationsystem.application.user.dto.request.UserRequestDto;
 import com.example.concertreservationsystem.application.user.dto.response.UserPointResponseDto;
 import com.example.concertreservationsystem.application.user.dto.response.UserPositionResponseDto;
 import com.example.concertreservationsystem.application.user.dto.response.UserResponseDto;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -23,6 +27,9 @@ public class UserService  {
     private final UserRepository userRepository;
     private final ReservationService reservationService;
     private final RedisTemplate<String,Object> redisTemplate;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
 
     @Transactional
@@ -80,5 +87,37 @@ public class UserService  {
         position = position + 1;
 
         return new UserPositionResponseDto(position);
+    }
+
+
+    @Transactional
+    public void generateDummyUsers(int count) {
+        List<User> userList = new ArrayList<>();
+        int batchSize = 1000;
+
+        for (int i = 1; i <= count; i++) {
+            String username = "User" + i;
+            User user = User.builder()
+                    .name(username)
+                    .build();
+            userList.add(user);
+
+            if (i % batchSize == 0) {
+                userRepository.saveAll(userList);
+                userRepository.flush();
+                userList.clear();
+                entityManager.clear();
+            }
+        }
+
+        if (!userList.isEmpty()) {
+            userRepository.saveAll(userList);
+            userRepository.flush();
+            userList.clear();
+            entityManager.clear();
+        }
+    }
+    public long countUsers() {
+        return userRepository.count();
     }
 }
