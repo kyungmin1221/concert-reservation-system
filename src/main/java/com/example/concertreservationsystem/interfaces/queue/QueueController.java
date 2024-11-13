@@ -1,4 +1,4 @@
-package com.example.concertreservationsystem.api.controller.queue;
+package com.example.concertreservationsystem.interfaces.queue;
 
 
 import com.example.concertreservationsystem.application.queue.facade.QueueFacade;
