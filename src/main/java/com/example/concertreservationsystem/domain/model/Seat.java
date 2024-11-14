@@ -1,7 +1,6 @@
 package com.example.concertreservationsystem.domain.model;
 
 
-import io.lettuce.core.dynamic.annotation.Param;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +9,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "seats")
+@Table(
+        name = "seats",
+        indexes = {
+                @Index(name = "idx_seats_seat_number_event_id", columnList = "seat_number, event_id")
+        }
+)
 public class Seat {
 
     @Id
