@@ -41,10 +41,10 @@ public class ReservationService  {
     private final RedisTemplate<String,Object> redisTemplate;
 
     @Transactional
-    @Caching(evict = {
-            @CacheEvict(value = "availableConcertDates", key = "#token"),
-            @CacheEvict(value = "availableConcertSeats", key = "#token + '_' + #requestDto.eventId")
-    })
+//    @Caching(evict = {
+//            @CacheEvict(value = "availableConcertDates", key = "#token"),
+//            @CacheEvict(value = "availableConcertSeats", key = "#token + '_' + #requestDto.eventId")
+//    })
     public ReservationResponseDto rvConcertToUser(Long concertId, String token, ReservationRequestDto requestDto) {
 
         // 대기열 토큰 검증 먼저 수행
@@ -88,7 +88,7 @@ public class ReservationService  {
 
     // 예약 가능한 날짜 및 좌석 조회
     // 날짜와 좌석이 false 인 것 리스트로 조회
-    @Cacheable(value = "availableConcertDates", key = "#token", unless = "#result.isEmpty()")
+    //@Cacheable(value = "availableConcertDates", key = "#token", unless = "#result.isEmpty()")
     public List<EventDateResponseDto> getInfoDate(String token) {
         log.info("getInfoDate 메서드가 호출.");
         validateToken(token);
@@ -101,7 +101,7 @@ public class ReservationService  {
                 .collect(Collectors.toList());
     }
 
-    @Cacheable(value = "availableConcertSeats", key = "#token + '_' + #eventId" ,unless = "#result.isEmpty()")
+    //@Cacheable(value = "availableConcertSeats", key = "#token + '_' + #eventId" ,unless = "#result.isEmpty()")
     public List<EventSeatResponseDto> getInfoSeat(String token, Long eventId) {
         log.info("좌석 캐시 확인");
         validateToken(token);
