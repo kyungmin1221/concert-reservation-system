@@ -28,8 +28,8 @@ public class UserService  {
     private final ReservationService reservationService;
     private final RedisTemplate<String,Object> redisTemplate;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+//    @PersistenceContext
+//    private EntityManager entityManager;
 
 
     @Transactional
@@ -73,7 +73,7 @@ public class UserService  {
     // 본인의 대기번호 조회
     public UserPositionResponseDto getUserQueuePosition(String token) {
         // Redis를 이용한 대기열 토큰 검증
-        User user = reservationService.validateAnyToken(token);
+        reservationService.validateAnyToken(token);
 
         // 토큰의 대기열 순번 조회
         Long position = redisTemplate.opsForZSet().rank("waiting_queue", token);
@@ -90,34 +90,34 @@ public class UserService  {
     }
 
 
-    @Transactional
-    public void generateDummyUsers(int count) {
-        List<User> userList = new ArrayList<>();
-        int batchSize = 1000;
-
-        for (int i = 1; i <= count; i++) {
-            String username = "User" + i;
-            User user = User.builder()
-                    .name(username)
-                    .build();
-            userList.add(user);
-
-            if (i % batchSize == 0) {
-                userRepository.saveAll(userList);
-                userRepository.flush();
-                userList.clear();
-                entityManager.clear();
-            }
-        }
-
-        if (!userList.isEmpty()) {
-            userRepository.saveAll(userList);
-            userRepository.flush();
-            userList.clear();
-            entityManager.clear();
-        }
-    }
-    public long countUsers() {
-        return userRepository.count();
-    }
+//    @Transactional
+//    public void generateDummyUsers(int count) {
+//        List<User> userList = new ArrayList<>();
+//        int batchSize = 1000;
+//
+//        for (int i = 1; i <= count; i++) {
+//            String username = "User" + i;
+//            User user = User.builder()
+//                    .name(username)
+//                    .build();
+//            userList.add(user);
+//
+//            if (i % batchSize == 0) {
+//                userRepository.saveAll(userList);
+//                userRepository.flush();
+//                userList.clear();
+//                entityManager.clear();
+//            }
+//        }
+//
+//        if (!userList.isEmpty()) {
+//            userRepository.saveAll(userList);
+//            userRepository.flush();
+//            userList.clear();
+//            entityManager.clear();
+//        }
+//    }
+//    public long countUsers() {
+//        return userRepository.count();
+//    }
 }

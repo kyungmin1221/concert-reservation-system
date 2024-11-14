@@ -13,13 +13,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(
-        name = "users",
-        indexes = {
-                @Index(name = "idx_users_name",
-                        columnList = "name")
-        }
-)
+@Table(name = "users")
 public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
