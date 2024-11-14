@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -69,5 +70,15 @@ public class QueueService{
     // 대기열 토큰을 발급해주는 메서드
     private String generateQueueToken() {
         return UUID.randomUUID().toString();
+    }
+
+
+    // 대기열 앞 순서가 나갔을 경우 순서를 앞당기는 메소드
+    public void changQueuePosition(Long position) {
+        List<QueueEntry> waitingPerson = queueRepository.findByQueuePositionGreaterThan(position);
+        for (QueueEntry queueEntry : waitingPerson) {
+            queueEntry.setQueuePosition(queueEntry.getQueuePosition());
+            queueRepository.save(queueEntry);
+        }
     }
 }

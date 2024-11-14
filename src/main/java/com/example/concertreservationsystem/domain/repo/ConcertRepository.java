@@ -6,4 +6,6 @@ import java.util.Optional;
 public interface ConcertRepository {
     Concert save(Concert concert);
     Optional<Concert> findByName(String name);
+
+    Optional<Concert> findById(Long id);
 }

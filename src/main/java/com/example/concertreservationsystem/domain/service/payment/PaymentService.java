@@ -7,6 +7,7 @@ import com.example.concertreservationsystem.domain.model.Reservation;
 import com.example.concertreservationsystem.domain.model.User;
 import com.example.concertreservationsystem.domain.repo.QueueRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
+import com.example.concertreservationsystem.domain.service.user.UserService;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaReservationRepository;
 import com.example.concertreservationsystem.application.payment.dto.request.UserPaymentRequestDto;
 import com.example.concertreservationsystem.application.payment.dto.response.UserPaymentResponseDto;
@@ -25,12 +26,13 @@ public class PaymentService {
     private final UserRepository userRepository;
     private final QueueRepository queueRepository;
     private final ReservationService reservationService;
+    private final UserService userService;
 
     @Transactional
     public UserPaymentResponseDto paymentConcert(String token, UserPaymentRequestDto requestDto) {
 
         // 유저의 대기열 토큰 검증
-        User user = reservationService.validateToken(token);
+        User user = userService.validateToken(token);
 
         Reservation reservation = reservationRepository.findById(requestDto.getReservationId())
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 예약 번호가 존재하지 않습니다."));
