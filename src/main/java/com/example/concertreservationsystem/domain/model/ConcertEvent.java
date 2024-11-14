@@ -11,7 +11,12 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "concert_events")
+@Table(
+        name = "concert_events",
+        indexes = {
+                @Index(name = "idx_concert_events_concert_id_event_date", columnList = "concert_id, event_date")
+        }
+ )
 public class ConcertEvent {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
