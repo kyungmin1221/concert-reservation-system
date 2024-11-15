@@ -1,4 +1,4 @@
-package com.example.concertreservationsystem.api.controller.concert;
+package com.example.concertreservationsystem.interfaces.concert;
 
 import com.example.concertreservationsystem.application.concert.facade.ConcertFacade;
 import com.example.concertreservationsystem.application.concert.dto.request.ConcertRequestDto;

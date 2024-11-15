@@ -1,5 +1,6 @@
 package com.example.concertreservationsystem.domain.service.queue;
 
+import com.example.concertreservationsystem.domain.model.QueueEntry;
 import com.example.concertreservationsystem.domain.model.User;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaQueueRepository;
@@ -10,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -23,7 +25,7 @@ public class QueueService{
     private final JpaQueueRepository queueRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     @Transactional
-    public QueueResponseToken addQueueToUser(String uuid) {
+    public QueueEntry addQueueToUser(String uuid) {
 
         User user = userRepository.findByUuid(uuid)
                 .orElseThrow(() -> new IllegalArgumentException("등록된 유저가 없습니다."));
@@ -47,12 +49,20 @@ public class QueueService{
         // 토큰의 메타데이터 저장 (Hash 사용)
         Map<String, Object> tokenData = new HashMap<>();
         tokenData.put("userId", user.getId());
-        tokenData.put("joinQueue", score);
+        tokenData.put("joinQueue", String.valueOf(score));
+        log.info("Token Data being stored in Redis: {}", tokenData);
         redisTemplate.opsForHash().putAll("queue:token:" + token, tokenData);
 
-        Long position = redisTemplate.opsForZSet().rank("waiting_queue", token);
+        Long position = redisTemplate.opsForZSet().rank("waiting_queue", String.valueOf(token));
 
-        return new QueueResponseToken(token, position);
+        QueueEntry entry = QueueEntry.builder()
+                .queueToken(token)
+                .joinQueue(LocalDateTime.now())
+                .queuePosition(position)
+                .user(user)
+                .build();
+
+        return queueRepository.save(entry);
     }
 
 

@@ -1,4 +1,4 @@
-package com.example.concertreservationsystem.api.controller.payment;
+package com.example.concertreservationsystem.interfaces.payment;
 
 import com.example.concertreservationsystem.application.payment.facade.PaymentFacade;
 import com.example.concertreservationsystem.application.payment.dto.request.UserPaymentRequestDto;

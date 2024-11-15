@@ -12,7 +12,12 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "reservations")
+@Table(
+        name = "reservations",
+        indexes = {
+            @Index(name = "idx_reservation_seat_id", columnList = "seat_id")
+        }
+)
 public class Reservation {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

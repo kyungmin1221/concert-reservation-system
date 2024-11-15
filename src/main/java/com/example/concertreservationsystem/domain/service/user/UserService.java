@@ -2,18 +2,22 @@ package com.example.concertreservationsystem.domain.service.user;
 
 import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
 import com.example.concertreservationsystem.domain.model.User;
-import com.example.concertreservationsystem.domain.repo.QueueRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
 import com.example.concertreservationsystem.application.user.dto.request.UserPointRequestDto;
 import com.example.concertreservationsystem.application.user.dto.request.UserRequestDto;
 import com.example.concertreservationsystem.application.user.dto.response.UserPointResponseDto;
 import com.example.concertreservationsystem.application.user.dto.response.UserPositionResponseDto;
 import com.example.concertreservationsystem.application.user.dto.response.UserResponseDto;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -23,6 +27,9 @@ public class UserService  {
     private final UserRepository userRepository;
     private final ReservationService reservationService;
     private final RedisTemplate<String,Object> redisTemplate;
+
+//    @PersistenceContext
+//    private EntityManager entityManager;
 
 
     @Transactional
@@ -48,7 +55,7 @@ public class UserService  {
     public UserPointResponseDto chargePoint(String token, UserPointRequestDto requestDto) {
 
         // 대기열 토큰 검증
-        User user = reservationService.validateToken(token);
+        User user = reservationService.validateAnyToken(token);
 
         // 잔액 충전
         user.addPoints(requestDto.getPoint());
@@ -59,14 +66,14 @@ public class UserService  {
 
     // 잔액 조회 (대기열 토큰 필수)
     public UserPointResponseDto getUserPoint(String token) {
-        User user = reservationService.validateToken(token);
+        User user = reservationService.validateAnyToken(token);
         return new UserPointResponseDto(user.getPoint());
     }
 
     // 본인의 대기번호 조회
     public UserPositionResponseDto getUserQueuePosition(String token) {
         // Redis를 이용한 대기열 토큰 검증
-        User user = reservationService.validateToken(token);
+        reservationService.validateAnyToken(token);
 
         // 토큰의 대기열 순번 조회
         Long position = redisTemplate.opsForZSet().rank("waiting_queue", token);
@@ -81,4 +88,36 @@ public class UserService  {
 
         return new UserPositionResponseDto(position);
     }
+
+
+//    @Transactional
+//    public void generateDummyUsers(int count) {
+//        List<User> userList = new ArrayList<>();
+//        int batchSize = 1000;
+//
+//        for (int i = 1; i <= count; i++) {
+//            String username = "User" + i;
+//            User user = User.builder()
+//                    .name(username)
+//                    .build();
+//            userList.add(user);
+//
+//            if (i % batchSize == 0) {
+//                userRepository.saveAll(userList);
+//                userRepository.flush();
+//                userList.clear();
+//                entityManager.clear();
+//            }
+//        }
+//
+//        if (!userList.isEmpty()) {
+//            userRepository.saveAll(userList);
+//            userRepository.flush();
+//            userList.clear();
+//            entityManager.clear();
+//        }
+//    }
+//    public long countUsers() {
+//        return userRepository.count();
+//    }
 }

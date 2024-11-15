@@ -35,8 +35,11 @@ public class TokenExpirationScheduler {
             // 키 존재 여부 확인 (만료된 경우 키가 없음)
             if (!redisTemplate.hasKey(tokenKey)) {
                 // 예약 취소 처리 및 관련 키 삭제
+                log.info("======== cleanupExpiredActiveTokens 활성화 스케쥴러 실행 시작 ================");
                 reservationService.cancelReservationByToken(token);
                 expiredCount++;
+                log.info("======== cleanupExpiredActiveTokens 활성화 스케쥴러 실행 시작 ================");
+
             }
         }
 

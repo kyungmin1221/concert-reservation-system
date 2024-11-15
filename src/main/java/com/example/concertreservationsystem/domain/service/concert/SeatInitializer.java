@@ -1,4 +1,4 @@
-package com.example.concertreservationsystem.infrastructure.config;
+package com.example.concertreservationsystem.domain.service.concert;
 
 import com.example.concertreservationsystem.domain.model.ConcertEvent;
 import com.example.concertreservationsystem.domain.model.Seat;

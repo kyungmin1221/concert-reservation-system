@@ -46,7 +46,7 @@ public class RedisConfig {
         redisTemplate.setKeySerializer(new StringRedisSerializer()); // 키를 문자열로 직렬화
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper())); // 값은 JSON 직렬화
         redisTemplate.setHashKeySerializer(new StringRedisSerializer()); // Hash의 키 직렬화
-        redisTemplate.setHashValueSerializer(new StringRedisSerializer()); // Hash의 값도 문자열로 직렬화
+        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper())); // Hash의 값도 문자열로 직렬화
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         return redisTemplate;
     }
