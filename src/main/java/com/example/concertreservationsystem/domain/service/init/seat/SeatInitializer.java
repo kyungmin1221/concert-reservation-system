@@ -1,4 +1,4 @@
-package com.example.concertreservationsystem.domain.service.concert;
+package com.example.concertreservationsystem.domain.service.init.seat;
 
 import com.example.concertreservationsystem.domain.model.ConcertEvent;
 import com.example.concertreservationsystem.domain.model.Seat;
