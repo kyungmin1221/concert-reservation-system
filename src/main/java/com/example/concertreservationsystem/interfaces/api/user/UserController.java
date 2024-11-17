@@ -1,4 +1,4 @@
-package com.example.concertreservationsystem.interfaces.user;
+package com.example.concertreservationsystem.interfaces.api.user;
 
 import com.example.concertreservationsystem.application.user.dto.request.UserPointRequestDto;
 import com.example.concertreservationsystem.application.user.dto.request.UserRequestDto;

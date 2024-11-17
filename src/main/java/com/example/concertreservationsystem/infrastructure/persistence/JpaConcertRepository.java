@@ -12,4 +12,7 @@ public interface JpaConcertRepository  extends JpaRepository<Concert, Long>, Con
     @Override
     Optional<Concert> findByName(String name);
 
+    @Override
+    Optional<Concert> findById(Long id);
+
 }

@@ -22,10 +22,10 @@ public class DataInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        initUserDataService.generateUsers(10000); // 10,000명으로 조정
-        initDataConcertAndSeatService.generateConcertsAndEvents(1000, 10); // 1,000개 콘서트, 각 콘서트당 10개 이벤트
-        initQueueDataService.generateQueueEntries(10000); // 10,000개로 조정
-        initReservationDataService.generateReservations(10000); // 10,000개로 조정
+//        initUserDataService.generateUsers(10000); // 10,000명으로 조정
+//        initDataConcertAndSeatService.generateConcertsAndEvents(1000, 10); // 1,000개 콘서트, 각 콘서트당 10개 이벤트
+//        initQueueDataService.generateQueueEntries(10000); // 10,000개로 조정
+//        initReservationDataService.generateReservations(10000); // 10,000개로 조정
         System.out.println("===초기화 메서드 정상 실행===");
     }
 

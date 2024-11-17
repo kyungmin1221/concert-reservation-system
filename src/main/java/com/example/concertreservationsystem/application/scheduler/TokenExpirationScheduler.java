@@ -1,5 +1,6 @@
 package com.example.concertreservationsystem.application.scheduler;
 
+import com.example.concertreservationsystem.domain.service.queue.TokenService;
 import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ public class TokenExpirationScheduler {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final ReservationService reservationService;
+    private final TokenService tokenService;
 
     @Scheduled(fixedRate = 60000) // 60초마다 실행
     public void cleanupExpiredActiveTokens() {
@@ -36,7 +38,7 @@ public class TokenExpirationScheduler {
             if (!redisTemplate.hasKey(tokenKey)) {
                 // 예약 취소 처리 및 관련 키 삭제
                 log.info("======== cleanupExpiredActiveTokens 활성화 스케쥴러 실행 시작 ================");
-                reservationService.cancelReservationByToken(token);
+                tokenService.cancelReservationByToken(token);
                 expiredCount++;
                 log.info("======== cleanupExpiredActiveTokens 활성화 스케쥴러 실행 시작 ================");
 

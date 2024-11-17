@@ -4,6 +4,7 @@ import com.example.concertreservationsystem.application.event.dto.response.Event
 import com.example.concertreservationsystem.application.event.dto.response.EventSeatResponseDto;
 import com.example.concertreservationsystem.application.reservation.dto.request.ReservationRequestDto;
 import com.example.concertreservationsystem.application.reservation.dto.response.ReservationResponseDto;
+import com.example.concertreservationsystem.domain.service.queue.TokenService;
 import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import java.util.List;
 public class ReservationFacadeImpl implements ReservationFacade{
 
     private final ReservationService reservationService;
+    private final TokenService tokenService;
 
     @Override
     public ReservationResponseDto rvConcertToUser(Long concertId, String token, ReservationRequestDto requestDto) {
@@ -38,12 +40,12 @@ public class ReservationFacadeImpl implements ReservationFacade{
 
     @Override
     public void activateTokens() {
-        reservationService.activateTokens();
+        tokenService.activateTokens();
     }
 
     @Override
     public void cancelReservationByToken(String token) {
-        reservationService.cancelReservationByToken(token);
+        tokenService.cancelReservationByToken(token);
     }
 
 }

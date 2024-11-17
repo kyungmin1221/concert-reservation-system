@@ -1,7 +1,7 @@
 package com.example.concertreservationsystem.domain.service.init.reservation;
 
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
-import com.example.concertreservationsystem.domain.model.Reservation;
+import com.example.concertreservationsystem.domain.model.reservation.Reservation;
 import com.example.concertreservationsystem.domain.model.Seat;
 import com.example.concertreservationsystem.domain.model.User;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
