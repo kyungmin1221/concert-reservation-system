@@ -1,6 +1,7 @@
 package com.example.concertreservationsystem.domain.model;
 
 
+import com.example.concertreservationsystem.domain.model.reservation.Reservation;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

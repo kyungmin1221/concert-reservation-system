@@ -3,7 +3,7 @@ package com.example.concertreservationsystem.domain.service.payment;
 import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import com.example.concertreservationsystem.domain.model.Concert;
-import com.example.concertreservationsystem.domain.model.Reservation;
+import com.example.concertreservationsystem.domain.model.reservation.Reservation;
 import com.example.concertreservationsystem.domain.model.User;
 import com.example.concertreservationsystem.domain.repo.QueueRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
@@ -34,8 +34,7 @@ public class PaymentService {
         // 유저의 대기열 토큰 검증
         User user = userService.validateToken(token);
 
-        Reservation reservation = reservationRepository.findById(requestDto.getReservationId())
-                .orElseThrow(() -> new IllegalArgumentException("해당하는 예약 번호가 존재하지 않습니다."));
+        Reservation reservation = reservationService.getReservationId(requestDto.getReservationId());
 
         if(reservation.getStatus() != ReservationStatus.ONGOING) {
             log.error("예약중인 상태가 아님");

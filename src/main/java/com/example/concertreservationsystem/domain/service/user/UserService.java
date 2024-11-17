@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService  {
 
     private final UserRepository userRepository;
-    private final ReservationService reservationService;
     private final RedisTemplate<String,Object> redisTemplate;
 
 

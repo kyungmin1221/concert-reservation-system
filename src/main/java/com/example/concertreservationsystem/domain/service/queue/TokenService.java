@@ -1,6 +1,6 @@
 package com.example.concertreservationsystem.domain.service.queue;
 
-import com.example.concertreservationsystem.domain.model.Reservation;
+import com.example.concertreservationsystem.domain.model.reservation.Reservation;
 import com.example.concertreservationsystem.domain.model.Seat;
 import com.example.concertreservationsystem.domain.service.seat.SeatService;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaReservationRepository;

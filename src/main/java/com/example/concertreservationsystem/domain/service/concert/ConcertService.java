@@ -21,7 +21,7 @@ public class ConcertService{
 
     @Transactional
     public ConcertResponseDto registerConcert(ConcertRequestDto requestDto) {
-
+        log.info("콘서트를 등록합니다.");
         String concertName = requestDto.getName();
         if(concertRepository.findByName(concertName).isPresent()) {
             log.error("이미 존재하는 이름을 가진 콘서트가 있다. = {}",concertName);
