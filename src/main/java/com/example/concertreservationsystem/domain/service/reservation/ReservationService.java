@@ -2,15 +2,15 @@ package com.example.concertreservationsystem.domain.service.reservation;
 
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import com.example.concertreservationsystem.domain.model.*;
+import com.example.concertreservationsystem.domain.model.reservation.Reservation;
+import com.example.concertreservationsystem.domain.model.reservation.ReservationCompletedEvent;
 import com.example.concertreservationsystem.domain.repo.*;
 import com.example.concertreservationsystem.domain.service.concert.ConcertService;
 import com.example.concertreservationsystem.domain.service.queue.QueueService;
 import com.example.concertreservationsystem.domain.service.seat.SeatService;
 import com.example.concertreservationsystem.domain.service.user.UserService;
-import com.example.concertreservationsystem.infrastructure.persistence.JpaConcertRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaReservationRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaSeatRepository;
-import com.example.concertreservationsystem.infrastructure.persistence.JpaUserRepository;
 import com.example.concertreservationsystem.application.event.dto.response.EventDateResponseDto;
 import com.example.concertreservationsystem.application.event.dto.response.EventSeatResponseDto;
 import com.example.concertreservationsystem.application.reservation.dto.request.ReservationRequestDto;
@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -44,6 +43,7 @@ public class ReservationService  {
     private final UserService userService;
     private final SeatService seatService;
     private final QueueService queueService;
+    private final ApplicationEventPublisher eventPublisher;
     private final RedisTemplate<String,Object> redisTemplate;
 
     @Transactional
@@ -52,7 +52,7 @@ public class ReservationService  {
             @CacheEvict(value = "availableConcertSeats", key = "#token + '_' + #requestDto.eventId")
     })
     public ReservationResponseDto rvConcertToUser(Long concertId, String token, ReservationRequestDto requestDto) {
-
+        log.info("콘서트 예약 로직을 실행합니다");
         // 대기열 토큰 검증 먼저 수행
         User user = userService.validateToken(token);
         Concert concert = concertService.getConcertById(concertId);
@@ -71,7 +71,14 @@ public class ReservationService  {
         Reservation reservation = createReservation(user, concert, seat);
         reservationRepository.save(reservation);
 
-        redisTemplate.opsForValue().set("reservation_token:"+ token, String.valueOf(reservation.getId()));
+        // 이벤트 발행
+        eventPublisher.publishEvent(new ReservationCompletedEvent(
+                reservation.getId(),
+                token,
+                user.getId()
+        ));
+
+        //redisTemplate.opsForValue().set("reservation_token:"+ token, String.valueOf(reservation.getId()));
 
        // cleanupAfterReservation(token, String.valueOf(user.getId()));
 
@@ -96,7 +103,7 @@ public class ReservationService  {
     // 날짜와 좌석이 false 인 것 리스트로 조회
     @Cacheable(value = "availableConcertDates", key = "#token", unless = "#result.isEmpty()")
     public List<EventDateResponseDto> getInfoDate(String token) {
-        log.info("getInfoDate 메서드가 호출.");
+        log.info("예약 가능한 날짜를 조회하는 로직을 실행합니다. 캐시가 적용되어 있습니다.");
         userService.validateToken(token);
         List<ConcertEvent> concertEvents = concertEventRepository.findAvailableConcertEvents();
         return concertEvents.stream()
@@ -109,7 +116,7 @@ public class ReservationService  {
 
     @Cacheable(value = "availableConcertSeats", key = "#token + '_' + #eventId" ,unless = "#result.isEmpty()")
     public List<EventSeatResponseDto> getInfoSeat(String token, Long eventId) {
-        log.info("좌석 캐시 확인");
+        log.info("예약 가능한 좌석을 조회하는 로직을 실행합니다. 캐시가 적용되어 있습니다.");
         userService.validateToken(token);
         List<Seat> seats = seatRepository.findAvailableSeatsByEventId(eventId);
         return seats.stream()
@@ -122,6 +129,7 @@ public class ReservationService  {
 
     // 일정 시간이 지나면 예약을 취소하는 메서드
     public void cancelReservationStatus() {
+        log.info("일정시간이 지나 예약을 취소합니다.");
         LocalDateTime expiredTime = LocalDateTime.now().minusMinutes(3);
 
         List<Reservation> expiredTimeReservation = reservationRepository
@@ -134,6 +142,7 @@ public class ReservationService  {
 
     // 예약 취소한 좌석을 예약 가능하도록 바꾸어주고 -> 대기중인 사람의 예약 상태를 대기중으로 변경
     private void changeReservationAvailableStatus(Reservation reservation) {
+        log.info("대기중인 손님의 예약 상태를 예약이 가능하도록 변경합니다.");
         reservation.setStatusCanceled();
         Seat seat = reservation.getSeat();
 
@@ -157,10 +166,9 @@ public class ReservationService  {
         }
     }
 
-
-//    public boolean isValidToken(String queueToken) {
-//        return queueRepository.existsByQueueToken(queueToken);
-//    }
-
+    public Reservation getReservationId(Long reservationId) {
+        return reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 예약 번호가 존재하지 않습니다."));
+    }
 
 }
