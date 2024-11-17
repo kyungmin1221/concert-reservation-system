@@ -1,5 +1,6 @@
 package com.example.concertreservationsystem.domain.service.payment;
 
+import com.example.concertreservationsystem.domain.model.payment.PaymentCompletedEvent;
 import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import com.example.concertreservationsystem.domain.model.Concert;
@@ -14,6 +15,7 @@ import com.example.concertreservationsystem.application.payment.dto.response.Use
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ public class PaymentService {
     private final QueueRepository queueRepository;
     private final ReservationService reservationService;
     private final UserService userService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public UserPaymentResponseDto paymentConcert(String token, UserPaymentRequestDto requestDto) {
@@ -35,19 +38,10 @@ public class PaymentService {
         User user = userService.validateToken(token);
 
         Reservation reservation = reservationService.getReservationId(requestDto.getReservationId());
-
-        if(reservation.getStatus() != ReservationStatus.ONGOING) {
-            log.error("예약중인 상태가 아님");
-            throw new IllegalStateException("현재 예약 대기 상태가 아닙니다.");
-        }
+        validateReservation(reservation, user);
 
         Concert concert = reservation.getConcert();
         Long concertPrice = concert.getPrice();
-
-        if(!user.equals(reservation.getUser())) {
-            log.error("예약을 한 유저가 맞는지 확인 필요 = {}", user.getName());
-            throw new IllegalStateException("대기열 토큰이 유효하지 않거나 다른 유저입니다.");
-        }
 
         try {
             // 유저 보유 잔액에서 콘서트 금액을 차감
@@ -58,8 +52,12 @@ public class PaymentService {
             reservation.setStatusComplete();
             reservationRepository.save(reservation);
 
-            // 예약상태에서 완료가 되었으면 대기열에서 OUT
-            queueRepository.deleteByUser(user);
+           eventPublisher.publishEvent(new PaymentCompletedEvent(
+                   user,
+                   reservation.getId(),
+                   token,
+                   reservation.getStatus()
+           ));
 
             return new UserPaymentResponseDto(
                     user.getPoint(),
@@ -70,5 +68,17 @@ public class PaymentService {
             throw new IllegalStateException("동시 결제 시도가 감지되었습니다. 다시 시도해주세요.");
         }
 
+    }
+
+    private void validateReservation(Reservation reservation, User user) {
+        if(reservation.getStatus() != ReservationStatus.ONGOING) {
+            log.error("예약중인 상태가 아님");
+            throw new IllegalStateException("현재 예약 대기 상태가 아닙니다.");
+        }
+
+        if(!user.equals(reservation.getUser())) {
+            log.error("예약을 한 유저가 맞는지 확인 필요 = {}", user.getName());
+            throw new IllegalStateException("대기열 토큰이 유효하지 않거나 다른 유저입니다.");
+        }
     }
 }
