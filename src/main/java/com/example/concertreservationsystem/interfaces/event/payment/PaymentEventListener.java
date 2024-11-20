@@ -14,16 +14,14 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Slf4j
 public class PaymentEventListener {
 
-    private final QueueRepository queueRepository;
-
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handlePaymentCompleted(PaymentCompletedEvent event) {
         log.info("결제 완료 후 이벤트 처리 시작");
         try {
-            Thread.sleep(5000);
-            queueRepository.deleteByUser(event.user());
-            log.info("사용자 ID {}의 토큰 삭제 완료", event.user().getId());
+            log.info("=== 결제 이벤트 리스너 이벤트 받음 === ", event);
+            Thread.sleep(3000L);
+            log.info("=== 결제 이벤트 리스너 호출 성공 === ");
         } catch (Exception e) {
             log.error("결제 이벤트 처리 중 오류 발생", e.getMessage());
         }

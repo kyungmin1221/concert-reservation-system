@@ -1,5 +1,6 @@
 package com.example.concertreservationsystem.domain.service.reservation;
 
+import com.example.concertreservationsystem.application.reservation.publisher.ReservationPublisher;
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import com.example.concertreservationsystem.domain.model.*;
 import com.example.concertreservationsystem.domain.model.reservation.Reservation;
@@ -43,7 +44,7 @@ public class ReservationService  {
     private final UserService userService;
     private final SeatService seatService;
     private final QueueService queueService;
-    private final ApplicationEventPublisher eventPublisher;
+    private final ReservationPublisher reservationPublisher;
     private final RedisTemplate<String,Object> redisTemplate;
 
     @Transactional
@@ -71,16 +72,14 @@ public class ReservationService  {
         Reservation reservation = createReservation(user, concert, seat);
         reservationRepository.save(reservation);
 
+        redisTemplate.opsForValue().set("reservation_token:"+ token, String.valueOf(reservation.getId()));
+
         // 이벤트 발행
-        eventPublisher.publishEvent(new ReservationCompletedEvent(
+        reservationPublisher.publish(new ReservationCompletedEvent(
                 reservation.getId(),
                 token,
                 user.getId()
         ));
-
-        //redisTemplate.opsForValue().set("reservation_token:"+ token, String.valueOf(reservation.getId()));
-
-       // cleanupAfterReservation(token, String.valueOf(user.getId()));
 
         return new ReservationResponseDto(
                 requestDto.getConcertName(),
