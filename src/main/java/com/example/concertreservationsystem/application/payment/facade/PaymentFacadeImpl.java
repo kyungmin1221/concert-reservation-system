@@ -12,6 +12,7 @@ public class PaymentFacadeImpl implements PaymentFacade{
 
     private final PaymentService paymentService;
 
+    @Override
     public UserPaymentResponseDto paymentConcert(String token, UserPaymentRequestDto requestDto){
         return paymentService.paymentConcert(token, requestDto);
     }

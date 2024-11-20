@@ -1,5 +1,6 @@
 package com.example.concertreservationsystem.domain.service.payment;
 
+import com.example.concertreservationsystem.application.payment.publisher.PaymentPublisher;
 import com.example.concertreservationsystem.domain.model.payment.PaymentCompletedEvent;
 import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
@@ -29,7 +30,7 @@ public class PaymentService {
     private final QueueRepository queueRepository;
     private final ReservationService reservationService;
     private final UserService userService;
-    private final ApplicationEventPublisher eventPublisher;
+    private final PaymentPublisher paymentPublisher;
 
     @Transactional
     public UserPaymentResponseDto paymentConcert(String token, UserPaymentRequestDto requestDto) {
@@ -52,7 +53,9 @@ public class PaymentService {
             reservation.setStatusComplete();
             reservationRepository.save(reservation);
 
-           eventPublisher.publishEvent(new PaymentCompletedEvent(
+            queueRepository.deleteByUser(user);
+
+            paymentPublisher.publish(new PaymentCompletedEvent(
                    user,
                    reservation.getId(),
                    token,
