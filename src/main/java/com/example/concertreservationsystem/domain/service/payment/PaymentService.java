@@ -1,7 +1,9 @@
 package com.example.concertreservationsystem.domain.service.payment;
 
 import com.example.concertreservationsystem.application.payment.publisher.PaymentPublisher;
+import com.example.concertreservationsystem.domain.model.PaymentOutBox;
 import com.example.concertreservationsystem.domain.model.payment.PaymentCompletedEvent;
+import com.example.concertreservationsystem.domain.repo.OutBoxRepository;
 import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import com.example.concertreservationsystem.domain.model.Concert;
@@ -13,6 +15,8 @@ import com.example.concertreservationsystem.domain.service.user.UserService;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaReservationRepository;
 import com.example.concertreservationsystem.application.payment.dto.request.UserPaymentRequestDto;
 import com.example.concertreservationsystem.application.payment.dto.response.UserPaymentResponseDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +34,8 @@ public class PaymentService {
     private final QueueRepository queueRepository;
     private final ReservationService reservationService;
     private final UserService userService;
-    private final PaymentPublisher paymentPublisher;
-
+    private final ObjectMapper objectMapper;
+    private final OutBoxRepository outBoxRepository;
     @Transactional
     public UserPaymentResponseDto paymentConcert(String token, UserPaymentRequestDto requestDto) {
 
@@ -55,12 +59,27 @@ public class PaymentService {
 
             queueRepository.deleteByUser(user);
 
-            paymentPublisher.publish(new PaymentCompletedEvent(
-                   user,
-                   reservation.getId(),
-                   token,
-                   reservation.getStatus()
-           ));
+//            paymentPublisher.publish(new PaymentCompletedEvent(
+//                   user,
+//                   reservation.getId(),
+//                   token,
+//                   reservation.getStatus()
+//           ));
+            PaymentCompletedEvent event = new PaymentCompletedEvent(
+                    user,
+                    reservation.getId(),
+                    token,
+                    reservation.getStatus()
+            );
+
+            String eventPayload = objectMapper.writeValueAsString(event);
+            PaymentOutBox paymentOutBox = PaymentOutBox.create(
+                    "payment-topic",
+                    event.getClass().getSimpleName(),
+                    eventPayload
+            );
+
+            outBoxRepository.save(paymentOutBox);
 
             return new UserPaymentResponseDto(
                     user.getPoint(),
@@ -69,6 +88,9 @@ public class PaymentService {
         } catch (OptimisticLockException e) {
             log.error("낙관적 락 예외 발생: {}", e.getMessage());
             throw new IllegalStateException("동시 결제 시도가 감지되었습니다. 다시 시도해주세요.");
+        } catch (JsonProcessingException e) {
+            log.error("직렬화 실패 오류");
+            throw new RuntimeException(e);
         }
 
     }
