@@ -12,16 +12,15 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 @Slf4j
 public class ReservationEventListener {
-    private final RedisTemplate<String, String> redisTemplate;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleReservationCompleted(ReservationCompletedEvent event) {
         log.info("예약 완료 후 예약 이벤트 처리를 시작. ReservationId: {}", event.reservationId());
 
         try {
-            redisTemplate.opsForValue().set("reservation_token:" + event.token(),
-                    String.valueOf(event.reservationId()));
-          //  throw new IllegalStateException("예약 이벤트 오류 테스트");
+            log.info("=== 예약 이벤트 리스너 이벤트 받음 === ", event);
+            Thread.sleep(3000L);
+            log.info("=== 예약 이벤트 리스너 호출 성공 === ");
         } catch (Exception e) {
             log.error("예약 이벤트 처리 중 오류 발생", e.getMessage());
         }
