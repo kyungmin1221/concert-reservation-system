@@ -1,4 +1,4 @@
-package com.example.concertreservationsystem.application.scheduler;
+package com.example.concertreservationsystem.application.scheduler.token;
 
 import com.example.concertreservationsystem.domain.service.queue.TokenService;
 import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
