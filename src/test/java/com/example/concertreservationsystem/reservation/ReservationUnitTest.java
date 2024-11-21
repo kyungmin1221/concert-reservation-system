@@ -1,6 +1,5 @@
 package com.example.concertreservationsystem.reservation;
 
-import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import com.example.concertreservationsystem.domain.model.*;
 import com.example.concertreservationsystem.domain.repo.QueueRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -63,7 +61,7 @@ public class ReservationUnitTest {
                 .build();
 
         ReservationRequestDto requestDto = new ReservationRequestDto();
-        requestDto.setUuid(uuid);
+        // requestDto.setUuid(uuid);
         requestDto.setConcertName("Concert");
         requestDto.setEventId(eventId);
         requestDto.setSeatNumber(seatNumber);
@@ -114,7 +112,7 @@ public class ReservationUnitTest {
                     .build();
 
             ReservationRequestDto requestDto = new ReservationRequestDto();
-            requestDto.setUuid(uuid);
+           // requestDto.setUuid(uuid);
             requestDto.setConcertName("Concert");
             requestDto.setEventId(eventId);
             requestDto.setSeatNumber(seatNumber);

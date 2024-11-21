@@ -18,7 +18,7 @@ public class Concert {
     @Column(name = "concert_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false)

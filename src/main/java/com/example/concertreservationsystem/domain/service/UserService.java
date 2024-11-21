@@ -11,11 +11,11 @@ import com.example.concertreservationsystem.web.dto.user.response.UserPointRespo
 import com.example.concertreservationsystem.web.dto.user.response.UserPositionResponseDto;
 import com.example.concertreservationsystem.web.dto.user.response.UserResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserUseCase {
@@ -30,6 +30,7 @@ public class UserService implements UserUseCase {
 
         String username = requestDto.getName();
         if(userRepository.findByName(username).isPresent()) {
+            log.error("이미 있는 유저의 이름={}", username);
             throw new IllegalArgumentException("이미 등록된 유저의 이름입니다.");
         }
 

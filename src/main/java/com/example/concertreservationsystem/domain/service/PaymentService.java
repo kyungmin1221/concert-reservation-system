@@ -6,15 +6,16 @@ import com.example.concertreservationsystem.domain.model.Concert;
 import com.example.concertreservationsystem.domain.model.Reservation;
 import com.example.concertreservationsystem.domain.model.User;
 import com.example.concertreservationsystem.domain.repo.QueueRepository;
-import com.example.concertreservationsystem.domain.repo.ReservationRepository;
 import com.example.concertreservationsystem.domain.repo.UserRepository;
 import com.example.concertreservationsystem.infrastructure.persistence.JpaReservationRepository;
 import com.example.concertreservationsystem.web.dto.user.request.UserPaymentRequestDto;
 import com.example.concertreservationsystem.web.dto.user.response.UserPaymentResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentService implements PaymentUseCase {
@@ -28,19 +29,22 @@ public class PaymentService implements PaymentUseCase {
     @Transactional
     public UserPaymentResponseDto paymentConcert(String token, UserPaymentRequestDto requestDto) {
 
+        // 유저의 대기열 토큰 검증
+        User user = reservationService.validateToken(token);
+
         Reservation reservation = reservationRepository.findById(requestDto.getReservationId())
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 예약 번호가 존재하지 않습니다."));
 
         if(reservation.getStatus() != ReservationStatus.ONGOING) {
+            log.error("예약중인 상태가 아님");
             throw new IllegalStateException("현재 예약 대기 상태가 아닙니다.");
         }
 
-        // 유저의 대기열 토큰 검증
-        User user = reservationService.validateToken(token);
         Concert concert = reservation.getConcert();
         Long concertPrice = concert.getPrice();
 
         if(!user.equals(reservation.getUser())) {
+            log.error("예역을 한 유저가 맞는지 확인 필요 = {}", user.getName());
             throw new IllegalStateException("대기열 토큰이 유효하지 않거나 다른 유저입니다.");
         }
 

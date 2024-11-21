@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface JpaReservationRepository extends JpaRepository<Reservation,Long>, ReservationRepository {
@@ -19,4 +20,8 @@ public interface JpaReservationRepository extends JpaRepository<Reservation,Long
 
     @Override
     Reservation save(Reservation reservation);
+
+    @Override
+    Optional<Reservation> findById(Long reservationId);
+
 }

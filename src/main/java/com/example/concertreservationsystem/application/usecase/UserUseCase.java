@@ -5,7 +5,6 @@ import com.example.concertreservationsystem.web.dto.user.request.UserRequestDto;
 import com.example.concertreservationsystem.web.dto.user.response.UserPointResponseDto;
 import com.example.concertreservationsystem.web.dto.user.response.UserPositionResponseDto;
 import com.example.concertreservationsystem.web.dto.user.response.UserResponseDto;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
