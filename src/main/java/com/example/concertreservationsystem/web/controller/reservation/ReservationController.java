@@ -48,12 +48,20 @@ public class ReservationController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @Operation(
+            summary = "콘서트 예약 가능 날짜 조회",
+            description = "콘서트 예약 API"
+    )
     @GetMapping("/dates")
     public ResponseEntity<List<EventDateResponseDto>> getInfoDateAndSeat(@RequestParam String token) {
         List<EventDateResponseDto> responseDtos = reservationUseCase.getInfoDate(token);
         return ResponseEntity.ok(responseDtos);
     }
 
+    @Operation(
+            summary = "콘서트 예약 가능 좌석 조회",
+            description = "콘서트 예약 API"
+    )
     @GetMapping("/{eventId}/seats")
     public ResponseEntity<List<EventSeatResponseDto>> getInfoSeat(@RequestParam String token,
                                                                   @PathVariable Long eventId) {
