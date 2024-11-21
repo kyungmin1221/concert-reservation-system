@@ -1,7 +1,9 @@
 package com.example.concertreservationsystem.domain.repo;
 
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
+import com.example.concertreservationsystem.domain.model.Concert;
 import com.example.concertreservationsystem.domain.model.Reservation;
+import com.example.concertreservationsystem.domain.model.Seat;
 import com.example.concertreservationsystem.domain.model.User;
 
 import java.time.LocalDateTime;
@@ -14,4 +16,7 @@ public interface ReservationRepository {
     Reservation save(Reservation reservation);
 
     Optional<Reservation> findById(Long reservationId);
+
+    List<Reservation> findByUserAndSeatAndConcert(User user, Seat seat, Concert concert);
+
 }
