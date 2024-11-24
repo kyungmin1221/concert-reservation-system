@@ -1,7 +1,7 @@
 package com.example.concertreservationsystem.application.payment.publisher;
 
-import com.example.concertreservationsystem.domain.model.payment.PaymentCompletedEvent;
+import com.example.concertreservationsystem.domain.model.payment.OutboxEvent;
 
 public interface PaymentPublisher {
-    void publish(PaymentCompletedEvent event);
+    void publish(OutboxEvent event);
 }

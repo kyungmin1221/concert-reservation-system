@@ -4,7 +4,7 @@ import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import com.example.concertreservationsystem.domain.model.User;
 
 public record PaymentCompletedEvent(
-    User user,
+    Long userId,
     Long reservationId,
     String token,
     ReservationStatus reservationStatus

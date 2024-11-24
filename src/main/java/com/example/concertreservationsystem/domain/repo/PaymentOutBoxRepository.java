@@ -6,8 +6,10 @@ import com.example.concertreservationsystem.domain.model.PaymentOutBox;
 import java.util.List;
 import java.util.Optional;
 
-public interface OutBoxRepository {
+public interface PaymentOutBoxRepository {
     List<PaymentOutBox> findAllByStatus(OutboxStatus outboxStatus);
 
-    Optional<PaymentOutBox> save(PaymentOutBox paymentOutBox);
+    PaymentOutBox save(PaymentOutBox paymentOutBox);
+    Optional<PaymentOutBox> findById(Long outboxId);
+
 }

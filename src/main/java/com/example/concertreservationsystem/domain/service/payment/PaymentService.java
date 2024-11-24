@@ -2,8 +2,9 @@ package com.example.concertreservationsystem.domain.service.payment;
 
 import com.example.concertreservationsystem.application.payment.publisher.PaymentPublisher;
 import com.example.concertreservationsystem.domain.model.PaymentOutBox;
+import com.example.concertreservationsystem.domain.model.payment.OutboxEvent;
 import com.example.concertreservationsystem.domain.model.payment.PaymentCompletedEvent;
-import com.example.concertreservationsystem.domain.repo.OutBoxRepository;
+import com.example.concertreservationsystem.domain.repo.PaymentOutBoxRepository;
 import com.example.concertreservationsystem.domain.service.reservation.ReservationService;
 import com.example.concertreservationsystem.domain.constant.ReservationStatus;
 import com.example.concertreservationsystem.domain.model.Concert;
@@ -20,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,9 +33,10 @@ public class PaymentService {
     private final UserRepository userRepository;
     private final QueueRepository queueRepository;
     private final ReservationService reservationService;
+    private final PaymentPublisher paymentPublisher;
     private final UserService userService;
     private final ObjectMapper objectMapper;
-    private final OutBoxRepository outBoxRepository;
+    private final PaymentOutBoxRepository paymentOutBoxRepository;
     @Transactional
     public UserPaymentResponseDto paymentConcert(String token, UserPaymentRequestDto requestDto) {
 
@@ -59,14 +60,9 @@ public class PaymentService {
 
             queueRepository.deleteByUser(user);
 
-//            paymentPublisher.publish(new PaymentCompletedEvent(
-//                   user,
-//                   reservation.getId(),
-//                   token,
-//                   reservation.getStatus()
-//           ));
+
             PaymentCompletedEvent event = new PaymentCompletedEvent(
-                    user,
+                    user.getId(),
                     reservation.getId(),
                     token,
                     reservation.getStatus()
@@ -78,8 +74,11 @@ public class PaymentService {
                     event.getClass().getSimpleName(),
                     eventPayload
             );
+            log.info("paymentOutBox 저장");
+            paymentOutBoxRepository.save(paymentOutBox);
 
-            outBoxRepository.save(paymentOutBox);
+            log.info("paymentPublisher.publish 실행");
+            paymentPublisher.publish(new OutboxEvent(paymentOutBox.getId()));
 
             return new UserPaymentResponseDto(
                     user.getPoint(),
