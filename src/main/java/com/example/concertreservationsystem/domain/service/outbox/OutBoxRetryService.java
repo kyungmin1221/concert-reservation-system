@@ -2,7 +2,7 @@ package com.example.concertreservationsystem.domain.service.outbox;
 
 import com.example.concertreservationsystem.domain.constant.OutboxStatus;
 import com.example.concertreservationsystem.domain.model.PaymentOutBox;
-import com.example.concertreservationsystem.domain.repo.OutBoxRepository;
+import com.example.concertreservationsystem.domain.repo.PaymentOutBoxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OutBoxRetryService {
 
-    private final OutBoxRepository outboxRepository;
+    private final PaymentOutBoxRepository outboxRepository;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Transactional
