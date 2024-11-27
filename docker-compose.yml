@@ -1,4 +1,5 @@
-version: '2.4'
+version: '3.8'
+
 services:
   zookeeper:
     image: bitnami/zookeeper:latest
@@ -7,11 +8,77 @@ services:
       - ALLOW_ANONYMOUS_LOGIN=yes
     ports:
       - "2181:2181"
+
   kafka:
     image: bitnami/kafka:latest
     container_name: kafka
-    ports:
-      - "9092:9092"
+    depends_on:
+      - zookeeper
     environment:
       KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://${KAFKA_HOST:kafka}:${KAFKA_PORT:9092}
+      KAFKA_CFG_LISTENERS: PLAINTEXT://0.0.0.0:9092
+    ports:
+      - "${KAFKA_PORT:9092}:9092"
+    healthcheck:
+      test: [ "CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "${KAFKA_HOST:kafka}:${KAFKA_PORT:9092}" ]
+      interval: 10s
+      retries: 3
+      timeout: 5s
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:12341234}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:reservation}
+      MYSQL_USER: ${MYSQL_USER:user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:user_password}
+    ports:
+      - "${MYSQL_PORT:3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  redis:
+    image: redis:6.2
+    container_name: redis
+    hostname: redis
+    ports:
+      - "${REDIS_PORT:6379}:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      retries: 3
+      timeout: 5s
+
+  spring-app:
+    image: concert-reservation-system:latest
+    container_name: spring-app
+    depends_on:
+      - kafka
+      - redis
+      - mysql
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://${MYSQL_HOST:mysql}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:reservation}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:user}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:user_password}
+      SPRING_REDIS_HOST: ${REDIS_HOST:redis}
+      SPRING_REDIS_PORT: ${REDIS_PORT:6379}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_HOST:kafka}:${KAFKA_PORT:9092}
+      SPRING_KAFKA_CONSUMER_GROUP_ID: ${KAFKA_GROUP_ID:spring-group}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:docker}
+    ports:
+      - "${SPRING_PORT:8080}:8080"
+
+volumes:
+  mysql_data:
+
+

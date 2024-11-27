@@ -34,7 +34,6 @@ public class InitDataConcertAndSeatService {
                 ConcertEvent event = ConcertEvent.builder()
                         .concert(concert)
                         .eventDate(LocalDate.from(LocalDateTime.now().plusDays(j)))
-                        .totalSeats(50L)
                         .build();
                 concertEventRepository.save(event);
                 seatInitializer.initializeSeatsForEvent(event);
