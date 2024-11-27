@@ -51,14 +51,12 @@ public class EventUnitTest {
 
         ConcertEvent event = ConcertEvent.builder()
                 .eventDate(eventDate)
-                .totalSeats(totalSeats)
                 .concert(concert)
                 .build();
 
          EventRequestDto requestDto = new EventRequestDto();
          requestDto.setConcertName(concertName);
          requestDto.setEventDate(eventDate);
-         requestDto.setTotalSeats(totalSeats);
 
 
         when(concertRepository.findByName(concertName))
@@ -67,7 +65,6 @@ public class EventUnitTest {
                 .thenReturn(false);
 
         EventResponseDto responseDto = concertEventService.registerConcertEvent(requestDto);
-        assertEquals(requestDto.getTotalSeats(),responseDto.getTotalSeats());
         assertEquals(requestDto.getEventDate(),responseDto.getEventDate());
 
         verify(concertEventRepository).save(any(ConcertEvent.class));
@@ -90,7 +87,6 @@ public class EventUnitTest {
         EventRequestDto requestDto = new EventRequestDto();
         requestDto.setConcertName(concertName);
         requestDto.setEventDate(eventDate);
-        requestDto.setTotalSeats(totalSeats);
 
         when(concertRepository.findByName(concertName))
                 .thenReturn(Optional.of(concert));

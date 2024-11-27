@@ -41,4 +41,9 @@ public class ConcertService{
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 콘서트가 없습니다."));
     }
 
+    public Concert getConcertByName(String concertName) {
+        return concertRepository.findByName(concertName)
+                .orElseThrow(() -> new IllegalArgumentException("등록된 콘서트 이름이 없습니다."));
+    }
+
 }

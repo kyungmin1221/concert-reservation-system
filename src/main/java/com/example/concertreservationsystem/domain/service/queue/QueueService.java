@@ -34,7 +34,7 @@ public class QueueService{
         String userQueueToken = "user_in_queue:" + uuid;
 
         if(redisTemplate.hasKey(userQueueToken)) {
-            throw new IllegalArgumentException("이미 유저가 대기열에 진입");
+            throw new IllegalArgumentException("이미 유저가 대기열에 진입 (이미 진입한 userId = " + user.getId() + " )");
         }
 
 

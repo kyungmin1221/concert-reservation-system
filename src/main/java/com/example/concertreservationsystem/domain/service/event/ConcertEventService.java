@@ -39,7 +39,6 @@ public class ConcertEventService{
 
         ConcertEvent concertEvent = ConcertEvent.builder()
                 .eventDate(eventDate)
-                .totalSeats(requestDto.getTotalSeats())
                 .concert(concert)
                 .build();
 

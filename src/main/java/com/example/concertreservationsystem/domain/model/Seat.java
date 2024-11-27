@@ -49,9 +49,11 @@ public class Seat {
 
     public void setAvailable() {
         this.available = true;
+        concertEvent.cancelReserveConcert();
     }
 
     public void setUnAvailable() {
         this.available = false;
+        concertEvent.reserveConcert();
     }
 }
