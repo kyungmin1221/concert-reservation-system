@@ -41,14 +41,18 @@ public class ConcertEvent {
     private List<Seat> seats = new ArrayList<>();
 
     @Builder
-    public ConcertEvent(LocalDate eventDate, Long totalSeats, Concert concert) {
+    public ConcertEvent(LocalDate eventDate, Concert concert) {
         this.eventDate = eventDate;
-        this.totalSeats = totalSeats;
-        this.availableSeats = totalSeats;
+        this.totalSeats = 50L;
+        this.availableSeats = 50L;
         this.concert = concert;
     }
 
     public void reserveConcert() {
         this.availableSeats -= 1;
+    }
+
+    public void cancelReserveConcert() {
+        this.availableSeats += 1;
     }
 }

@@ -11,5 +11,4 @@ import java.time.LocalDate;
 public class EventRequestDto {
     private String concertName;
     private LocalDate eventDate;
-    private Long totalSeats;
 }

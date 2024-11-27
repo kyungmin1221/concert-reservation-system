@@ -56,7 +56,7 @@ public class ReservationService  {
         log.info("콘서트 예약 로직을 실행합니다");
         // 대기열 토큰 검증 먼저 수행
         User user = userService.validateToken(token);
-        Concert concert = concertService.getConcertById(concertId);
+        Concert concert = concertService.getConcertByName(requestDto.getConcertName());
         Seat seat = seatService.findSeatForUpdate(requestDto.getSeatNumber(), requestDto.getEventId());
 
         // 예약이 불가능한 경우 로직 //
@@ -65,7 +65,10 @@ public class ReservationService  {
             log.error("이미 예약이 되어 있는 좌석 = {}", seat.getSeatNumber());
             throw new IllegalStateException("이미 예약된 좌석입니다. 다른 좌석을 선택해주세요.");
         }
-
+        if(seat.getConcertEvent().getTotalSeats() <=0 ) {
+            log.error("예약 가능한 좌석이 없습니다. 현재 좌석 0개 이하");
+            throw new IllegalStateException("잔여 좌석이 없습니다.");
+        }
         // 예약 가능 : 예약 상태를 true -> false 변경
         seatService.setUnavailable(seat);
 
